@@ -38,7 +38,7 @@ function r_isco(a_star)
     elseif a < 0
         r_isco = (3+z2+(3-z1)*(3+z1+2*z2)^(1/2))*r_g
     end
-    
+
     return r_isco
 end
 
@@ -66,4 +66,4 @@ for r in r_vals
 end
 
 plot(r_vals, D_vals)
-plot(r_vals, T_vals)
+plot(r_vals, T_vals) 
