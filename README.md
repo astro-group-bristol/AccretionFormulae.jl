@@ -4,3 +4,4 @@ Physical quantities related to black holes and accretion flows implemented as Ju
 ### People
 
 Fergus Baker (PhD Student)
+Andy Young (Associate Professor)
