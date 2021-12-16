@@ -2,12 +2,13 @@
 using Plots
 
 #functions
+"""
+From Reynolds (2020) (Eq2-4)
+Calculates the radius of the inner most stable circular orbit of the a black hole,
+with spin a_star, and mass M.
+"""
 function r_isco(a_star, M)
-    """
-    From Reynolds (2020) (Eq2-4)
-    Calculates the radius of the inner most stable circular orbit of the a black hole,
-    with spin a_star, and mass M.
-    """
+    
     a = a_star
     r_g = 2*G*M/(c^2)
     z1 = 1+∛(1-a^2)*(∛(1+a)+∛(1-a))
@@ -19,12 +20,13 @@ function r_isco(a_star, M)
     end
 end
 
+"""
+From Page & Thorne (1974) (Eq15n)
+Calculates the function f at radius r, for a black hole of spin a_star, and mass M, 
+which is used to calculate the flux given by its accretion disk.
+"""
 function f(r, r_isco, a_star, M)
-    """
-    From Page & Thorne (1974) (Eq15n)
-    Calculates the function f at radius r, for a black hole of spin a_star, and mass M, 
-    which is used to calculate the flux given by its accretion disk.
-    """
+  
     x = √(r/M)
     x0 = √(r_isco/M)
     x1 = 2*cos((1/3)*(acos(a_star))-(π/3))
@@ -45,6 +47,13 @@ function temp(diss)
     temp = (diss/σ_SB)^(1/4)
 end
 
+"""
+From Fanton et al. (1997) (Eq78)
+"""
+function temp_obs(r, r_max, g, T_max, f, f_max)
+    temp =  g*T_max*((f*r_max)/(r*f_max))^(1/4)
+end
+
 #constants
 G = 6.67e-11
 c = 3e8
@@ -59,15 +68,29 @@ R_isco = r_isco(a_star, M)
 L_edd = 3e4*L_☼*(M/M_☼)
 Mdot = -L_edd/(c^2*η)
 mdot = 0.1*Mdot
+g = 500
 
 r_vals = LinRange(R_isco, 10*R_isco, 10000)
 
 f_r = f.(r_vals, R_isco, a_star, M)
 D_vals = diss.(r_vals, f_r)
 T_vals = temp.(D_vals)
+
+T_max = maximum(T_vals)
+r_max = r_vals[argmax(T_vals)]
+f_max = f(r_max, R_isco, a_star, M)
+
+#T_max = 10e5
+
+T_obs_vals = temp_obs.(r_vals, r_max, g, T_max, f_r, f_max)
     
 dissplot = plot(r_vals, D_vals, xlabel = "r(m)", ylabel = "Dissipation (W/m²)")
 tempplot = plot(r_vals, T_vals, xlabel = "r(m)", ylabel = "Temperature (K)")
+tempobsplot = plot(r_vals, T_obs_vals, xlabel = "r(m)", ylabel = "Temperature (K)")
 
 display(dissplot)
 display(tempplot)
+display(tempobsplot)
+
+
+plot(tempplot, tempobsplot)
