@@ -142,45 +142,75 @@ Experimental API:
 function regular_pdotu_inv(L, M, r, a, θ)
     (eⱽ(M, r, a, θ) * √(1 - Vₑ(M, r, a, θ)^2)) / (1 - L * Ωₑ(M, r, a))
 end
-function regular_pdotu_inv(u, p, m) where {T}
-    regular_pdotu_inv(p.L, m.M, u[2], m.a, u[3])
+@inline function regular_pdotu_inv(u, p, m)
+    @inbounds regular_pdotu_inv(p.L, m.M, u[2], m.a, u[3])
 end
 
-function plunging_p_dot_u(E, L, M, Q, rms, r, a, sign_r)
-    inv(
-        uᵗ(M, rms, r, a) - uᶲ(M, rms, r, a) * L -
-        sign_r * uʳ(M, rms, r) * Σδr_δλ(E, L, M, Q, r, a) / Δ(M, r, a)
-    )
-end
-function plunging_p_dot_u(u, p::CarterMethodBL{T}, sign_r) where {T}
-    plunging_p_dot_u(p.E, p.L, p.M, p.Q, p.rms, u[2], p.a, sign_r)
-end
-function plunging_p_dot_u(u, v, p::AbstractMetricParams{T}) where {T}
-    let r = u[2], a = p.a, M = p.M, rms = rms(p.M, p.a)
-        inv(uᵗ(M, rms, r, a) * v[1] - uᶲ(M, rms, r, a) * v[4] - uʳ(M, rms, r) * v[2])
-    end
+# Ignore plunging region for now 
+# until we have an RMS function
+
+#function plunging_p_dot_u(E, L, M, Q, rms, r, a, sign_r)
+#    inv(
+#        uᵗ(M, rms, r, a) - uᶲ(M, rms, r, a) * L -
+#        sign_r * uʳ(M, rms, r) * Σδr_δλ(E, L, M, Q, r, a) / Δ(M, r, a)
+#    )
+#end
+#function plunging_p_dot_u(u, p::CarterMethodBL{T}, sign_r) where {T}
+#    plunging_p_dot_u(p.E, p.L, p.M, p.Q, p.rms, u[2], p.a, sign_r)
+#end
+#function plunging_p_dot_u(u, v, p::AbstractMetricParams{T}) where {T}
+#    let r = u[2], a = p.a, M = p.M, rms = rms(p.M, p.a)
+#        inv(uᵗ(M, rms, r, a) * v[1] - uᶲ(M, rms, r, a) * v[4] - uʳ(M, rms, r) * v[2])
+#    end
+#end
+#@inline function redshift_function(val, λ, u, p::CarterMethodBL{T}, d) where {T}
+#    @inbounds if u[2] > rms(p.M, p.a)
+#        return regular_pdotu_inv(u, p)
+#    else
+#        return plunging_p_dot_u(u, p, λ < p.λr_change ? -1 : 1)
+#    end
+#end
+
+@inline function redshift_function(m::CarterMethodBL{T}, u) where {T}
+    regular_pdotu_inv(u, p, m)
 end
 
+@inline function redshift_function(m::AbstractMetricParams{T}, u, v) where {T}
+    metric = GeodesicBase.metric(m, u)
+    energy = GeodesicBase.E(metric, v)
+    angmom = GeodesicBase.Lz(metric, v)
 
-@inline function redshift_function(val, λ, u, p::CarterMethodBL{T}, d) where {T}
-    # this function needs a specialsation for AbstractMetricParams{T}
-    # since at the moment regular_pdotu_inv and plunging_p_dot_u are Carter specific
-    @inbounds if u[2] > rms(p.M, p.a)
-        return regular_pdotu_inv(u, p)
-    else
-        return plunging_p_dot_u(u, p, λ < p.λr_change ? -1 : 1)
-    end
+    # calculate momentum vector; only need 1 and 4 components
+    # since currently u 2 and 3 are both 0
+    # TODO: create a momentum function
+    norm = metric[1,1]*metric[4,4] - metric[1,4]^2
+    pt = - metric[4,4]*energy + metric[1,4]*angmom
+    pϕ = metric[1,4]*energy + metric[1,1]*angmom
+
+    # make momentum vector
+    p = @SVector [
+        pt/norm, 0, 0, pϕ/norm
+    ]
+
+    # TODO: this only works for Kerr
+    disc_norm = (AccretionFormulae.eⱽ(m.M, u[2], m.a, u[3]) * √(1 - AccretionFormulae.Vₑ(m.M, u[2], m.a, u[3])^2))
+
+    u_disc = @SVector [
+        1, 0, 0, AccretionFormulae.Ωₑ(m.M, u[2], m.a)
+    ]
+
+    # use Tullio to do the einsum
+    @tullio g := metric[i,j] * (u_disc[i]) * p[j]
+    disc_norm/g
 end
 
-"""
-Specialisation for 2nd order method.
-Broken at the moment -- need a raising / lowering operator for the above functional form, else
-a better derivation of p.u .
-"""
-@inline function redshift_function(val, λ, u, v, p::AbstractMetricParams{T}, d) where {T}
-    @inbounds if u[2] > rms(p.M, p.a)
-        return regular_pdotu_inv(u, v, p)
-    else
-        return plunging_p_dot_u(u, v, p)
-    end
+# value functions exports
+
+function _redshift_guard(m::CarterMethodBL{T}, sol, max_time; kwargs...) where {T}
+    redshift_function(m, sol.u[end])
 end
+function _redshift_guard(m::AbstractMetricParams{T}, sol, max_time; kwargs...) where {T}
+    redshift_function(m, sol.u[end].x[2], sol.u[end].x[1])
+end
+
+const redshift = ValueFunction(_redshift_guard)
