@@ -2,8 +2,6 @@ using GeodesicRendering
 using AccretionGeometry
 using CarterBoyerLindquist
 using AccretionFormulae
-include("emission_profile.jl")
-#using emission_profile
 
 using Plots
 gr()
@@ -12,7 +10,7 @@ m = CarterMethodBL(M=1.0, a=1.0)
 
 # observer position
 u = [0.0, 1000.0, deg2rad(85.0), 0.0]
-R_isco = r_isco(m.a, m.M)
+R_isco = AccretionFormulae.r_isco(m.a, m.M)
 
 # disc has inner radius 10, outer radius 50, perpendicular to the spin axis
 d = GeometricThinDisc(R_isco, 50.0, deg2rad(90.0))
@@ -31,7 +29,7 @@ function temperature(m, sol, max_time; kwargs...)
     M = m.M*1.99e30
     a = m.a
     a_star = a/M
-    temperature = temp_obs(u[2], a_star, M, g)
+    temperature = AccretionFormulae.temp_obs(u[2], a_star, M, g)
 end
 
 # create and compose the ValueFunction
