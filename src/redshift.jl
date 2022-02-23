@@ -184,7 +184,7 @@ end
     # since currently u 2 and 3 are both 0
     # TODO: create a momentum function
     norm = metric[1,1]*metric[4,4] - metric[1,4]^2
-    pt = - metric[4,4]*energy + metric[1,4]*angmom
+    pt = - (metric[4,4]*energy + metric[1,4]*angmom)
     pϕ = metric[1,4]*energy + metric[1,1]*angmom
 
     # make momentum vector
