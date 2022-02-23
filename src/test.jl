@@ -24,7 +24,7 @@ function redshift(m, sol, max_time; kwargs...)
 end
 
 function temperature(m, sol, max_time; kwargs...)
-    g =  redshift(m, sol, max_time: kwargs...)
+    g = redshift(m, sol, max_time; kwargs...)
 
     u = sol.u[end]
 
@@ -55,4 +55,4 @@ img = @time rendergeodesics(
 )
 
 # plot
-heatmap(reverse(img, dims=1))
+contour(reverse(img, dims=1))

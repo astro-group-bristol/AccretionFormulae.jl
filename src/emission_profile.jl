@@ -53,15 +53,15 @@ end
 
 function temp(r, a_star, M)
     m_dot = mdot(M)
-    temp = (diss(m_dot, r, a_star, M)/σ_SB)^(1/4)
+    temp = abs(diss(m_dot, r, a_star, M)/σ_SB)^(1/4)
 end
 
 """
 From Fanton et al. (1997) (Eq78)
 """
 function temp_obs(r, a_star, M, g)
-    temp = temp(r, a_star, M)
-    temp_obs =  g*temp
+    T = temp(r, a_star, M)
+    temp_obs =  g*T
 end
 
 # constants
