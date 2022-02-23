@@ -8,7 +8,6 @@ Calculates the radius of the inner most stable circular orbit of the a black hol
 with spin a_star, and mass M.
 """
 function r_isco(a_star, M)
-    
     a = a_star
     r_g = 2*G*M/(c^2)
     z1 = 1+∛(1-a^2)*(∛(1+a)+∛(1-a))

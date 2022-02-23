@@ -1,5 +1,6 @@
 module AccretionFormulae
 
+import GeodesicBase
 import GeodesicBase: AbstractMetricParams
 import CarterBoyerLindquist: CarterMethodBL, Σ, Δ, A
 

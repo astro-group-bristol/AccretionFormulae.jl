@@ -171,7 +171,7 @@ end
 #    end
 #end
 
-@inline function redshift_function(m::CarterMethodBL{T}, u) where {T}
+@inline function redshift_function(m::CarterMethodBL{T}, u, p) where {T}
     regular_pdotu_inv(u, p, m)
 end
 
@@ -196,18 +196,18 @@ end
     disc_norm = (AccretionFormulae.eⱽ(m.M, u[2], m.a, u[3]) * √(1 - AccretionFormulae.Vₑ(m.M, u[2], m.a, u[3])^2))
 
     u_disc = @SVector [
-        1, 0, 0, AccretionFormulae.Ωₑ(m.M, u[2], m.a)
+        1/disc_norm, 0, 0, AccretionFormulae.Ωₑ(m.M, u[2], m.a)/disc_norm
     ]
 
     # use Tullio to do the einsum
     @tullio g := metric[i,j] * (u_disc[i]) * p[j]
-    disc_norm/g
+    1/g
 end
 
 # value functions exports
 
 function _redshift_guard(m::CarterMethodBL{T}, sol, max_time; kwargs...) where {T}
-    redshift_function(m, sol.u[end])
+    redshift_function(m, sol.u[end], sol.prob.p)
 end
 function _redshift_guard(m::AbstractMetricParams{T}, sol, max_time; kwargs...) where {T}
     redshift_function(m, sol.u[end].x[2], sol.u[end].x[1])

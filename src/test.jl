@@ -6,7 +6,7 @@ using AccretionFormulae
 using Plots
 gr()
 
-m = CarterMethodBL(M=1.0, a=1.0)
+m = CarterMethodBL(M=1.0, a=0.0)
 
 # observer position
 u = [0.0, 1000.0, deg2rad(85.0), 0.0]
@@ -37,7 +37,7 @@ redshift_vf = (
     # calculate redshift
     ValueFunction(temperature)
     # filter only pixels with r > 9, i.e. on the disc
-    ∘ FilterValueFunction((m, sol, max_time; kwargs...) -> sol.u[end][2] > R_isco, NaN)
+    ∘ FilterValueFunction((m, sol, max_time; kwargs...) -> sol.u[end][2] > 3.0, NaN)
     # filter only pixels that terminated early (i.e., intersected with something)
     ∘ ConstValueFunctions.filter_early_term
 )
@@ -53,4 +53,4 @@ img = @time rendergeodesics(
 )
 
 # plot
-contour(reverse(img, dims=1))
+heatmap(reverse(img, dims=1))
