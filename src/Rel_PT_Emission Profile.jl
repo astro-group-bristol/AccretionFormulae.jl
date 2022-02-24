@@ -1,48 +1,74 @@
+#imports
 using Plots
 
-function f(r)
+#functions
+function r_isco(a_star, M)
+    """
+    From Reynolds (2020) (Eq2-4)
+    Calculates the radius of the inner most stable circular orbit of the a black hole,
+    with spin a_star, and mass M.
+    """
+    a = a_star
+    r_g = M
+    z1 = 1+∛(1-a^2)*(∛(1+a)+∛(1-a))
+    z2 = √(3*a^2+z1^2)
+    if a >= 0
+        r_isco = (3+z2-√((3-z1)*(3+z1+2*z2)))*r_g
+    elseif a < 0
+        r_isco = (3+z2+√((3-z1)*(3+z1+2*z2)))*r_g
+    end
+end
 
-    x = sqrt(r/M)
-    x0 = sqrt(R_isco/M)
-    x1 = 2*cos((1/3)*(acos(a_star))-(pi/3))
-    x2 = 2*cos((1/3)*(acos(a_star))+(pi/3))
+function f(r, r_isco, a_star, M)
+    """
+    From Page & Thorne (1974) (Eq15n)
+    Calculates the function f at radius r, for a black hole of spin a_star, and mass M, 
+    which is used to calculate the flux given by its accretion disk.
+    """
+    x = √(r/M)
+    x0 = √(r_isco/M)
+    x1 = 2*cos((1/3)*(acos(a_star))-(π/3))
+    x2 = 2*cos((1/3)*(acos(a_star))+(π/3))
     x3 = -2*cos((1/3)*(acos(a_star)))
 
-    flux = (3/(2*M))*(1/(x^(2)*(x^(3)-(3*x)+(2*a_star))))*(x-x0-((3/2)*a_star*log(x/x0)) 
+    f = (3/(2*M))*(1/(x^2*(x^3-(3*x)+(2*a_star))))*(x-x0-((3/2)*a_star*log(x/x0)) 
             - (3*(x1-a_star)^2)/(x1*(x1-x2)*(x1-x3))*log((x-x1)/(x0-x1)) 
             - (3*(x2-a_star)^2)/(x2*(x2-x1)*(x2-x3))*log((x-x2)/(x0-x2)) 
             - (3*(x3-a_star)^2)/(x3*(x3-x1)*(x3-x2))*log((x-x3)/(x0-x3)))
-
-    return flux
-
 end
 
-function D(R, f)
-    D = mdot*f/(4*pi*R)
-    return D
+
+function diss(r, f)
+    diss = ((c^6)/(G^2))*mdot*f/(4*π*r)
 end
 
+function temp(diss)
+    temp = (diss/σ_SB)^(1/4)
+end
+
+#constants
 G = 6.67e-11
 c = 3e8
-L_sun = 3.8e26
-M_sun = 1.99e30
+L_☼ = 3.8e26
+M_☼ = 1.99e30
+σ_SB = 5.67e-8
 
-eta = 0.1
-M = 10*M_sun
-a_star = 0.5
-
-R_isco = 6*G*M/(c^2)
-L_edd = 3e4*L_sun*(M/M_sun)
-Mdot = L_edd/(c^2*eta)
-mdot = 0.1*Mdot
+η = 0.1
+M = 10*M_☼ #10 solar mass black hole
+a_star = 0.9
+R_isco = r_isco(a_star, M)
+L_edd = 3e4*L_☼*(M/M_☼)
+M_dot = L_edd/(c^2*η)
+mdot = 0.1*M_dot
 
 r_vals = LinRange(R_isco, 10*R_isco, 10000)
-D_vals = []
 
-for r in r_vals
-    push!(D_vals, D(r, f(r)))
-end
+f_r = f.(r_vals, R_isco, a_star, M)
+D_vals = diss.(r_vals, f_r)
+T_vals = temp.(D_vals)
+    
+#dissplot = plot(r_vals, D_vals, xlabel = "Radius (m)", ylabel = "Dissipation (W/m²)")
+tempplot = plot(r_vals, T_vals, xlabel = "Radius (m)", ylabel = "Temperature (K)")
 
-plot(r_vals, D_vals)
-
-
+#display(dissplot)
+display(tempplot)
