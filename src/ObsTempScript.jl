@@ -11,8 +11,8 @@ m = CarterMethodBL(M=1.0, a=0.0)
 # observer position
 u = [0.0, 1000.0, deg2rad(85.0), 0.0]
 
-M_BH = m.M
-a_star = m.a
+M_BH = m.M*1 #defining mass (kg)
+a_star = m.a 
 
 R_isco = AccretionFormulae.r_isco(a_star, M_BH)
 
@@ -56,5 +56,8 @@ img = @time rendergeodesics(
 )
 
 # plot
-heatmap(reverse(img, dims=1))
+new_img = reverse(img, dims=1)
+new_img ./= 1e14
 
+heatmap(new_img)
+title!("Temperature (10^14)")
