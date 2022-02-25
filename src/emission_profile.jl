@@ -9,13 +9,13 @@ with spin a_star, and mass M.
 """
 function r_isco(a_star, M)
     a = a_star
-    r_g = 2*G*M/(c^2)
+    r_g = M
     z1 = 1+∛(1-a^2)*(∛(1+a)+∛(1-a))
     z2 = √(3*a^2+z1^2)
     if a >= 0
-        r_isco = (3+z2-(3-z1)*√(3+z1+2*z2))*r_g
+        r_isco = (3+z2-√((3-z1)*(3+z1+2*z2)))*r_g
     elseif a < 0
-        r_isco = (3+z2+(3-z1)*√(3+z1+2*z2))*r_g
+        r_isco = (3+z2+√((3-z1)*(3+z1+2*z2)))*r_g
     end
 end
 
@@ -41,18 +41,18 @@ function f(r, a_star, M)
 end
 
 function diss(mdot, r, a_star, M)
-    diss = mdot*f(r, a_star, M)/(4*π*r)
+    diss = ((c^6)/(G^2))*mdot*f(r, a_star, M)/(4*π*r)
 end
 
 function mdot(M)
     L_edd = 3e4*L_☼*(M/M_☼)
-    Mdot = -L_edd/(c^2*η)
+    Mdot = L_edd/(c^2*η)
     mdot = 0.1*Mdot
 end
 
 function temp(r, a_star, M)
     m_dot = mdot(M)
-    temp = abs(diss(m_dot, r, a_star, M)/σ_SB)^(1/4)
+    temp = (diss(m_dot, r, a_star, M)/σ_SB)^(1/4)
 end
 
 """
@@ -60,7 +60,7 @@ From Fanton et al. (1997) (Eq78)
 """
 function temp_obs(r, a_star, M, g)
     T = temp(r, a_star, M)
-    temp_obs =  g*T
+    temp_obs = g*T
 end
 
 # constants
@@ -74,8 +74,4 @@ M_☼ = 1.99e30
 # M = 10*M_☼
 # a_star = 0.1
 
-module EmissionProfile
-
 export temp_obs, r_isco
-
-end
