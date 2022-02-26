@@ -142,54 +142,13 @@ Experimental API:
 function regular_pdotu_inv(L, M, r, a, θ)
     (eⱽ(M, r, a, θ) * √(1 - Vₑ(M, r, a, θ)^2)) / (1 - L * Ωₑ(M, r, a))
 end
-@inline function regular_pdotu_inv(u, p, m)
-    @inbounds regular_pdotu_inv(p.L, m.M, u[2], m.a, u[3])
-end
 
-# Ignore plunging region for now 
-# until we have an RMS function
-
-#function plunging_p_dot_u(E, L, M, Q, rms, r, a, sign_r)
-#    inv(
-#        uᵗ(M, rms, r, a) - uᶲ(M, rms, r, a) * L -
-#        sign_r * uʳ(M, rms, r) * Σδr_δλ(E, L, M, Q, r, a) / Δ(M, r, a)
-#    )
-#end
-#function plunging_p_dot_u(u, p::CarterMethodBL{T}, sign_r) where {T}
-#    plunging_p_dot_u(p.E, p.L, p.M, p.Q, p.rms, u[2], p.a, sign_r)
-#end
-#function plunging_p_dot_u(u, v, p::AbstractMetricParams{T}) where {T}
-#    let r = u[2], a = p.a, M = p.M, rms = rms(p.M, p.a)
-#        inv(uᵗ(M, rms, r, a) * v[1] - uᶲ(M, rms, r, a) * v[4] - uʳ(M, rms, r) * v[2])
-#    end
-#end
-#@inline function redshift_function(val, λ, u, p::CarterMethodBL{T}, d) where {T}
-#    @inbounds if u[2] > rms(p.M, p.a)
-#        return regular_pdotu_inv(u, p)
-#    else
-#        return plunging_p_dot_u(u, p, λ < p.λr_change ? -1 : 1)
-#    end
-#end
-
-@inline function redshift_function(m::CarterMethodBL{T}, u, p) where {T}
-    regular_pdotu_inv(u, p, m)
-end
-
-@inline function redshift_function(m::AbstractMetricParams{T}, u, v) where {T}
+@inline function regular_pdotu_inv(m::AbstractMetricParams{T}, u, v) where {T}
     metric = GeodesicBase.metric(m, u)
-    energy = GeodesicBase.E(metric, v)
-    angmom = GeodesicBase.Lz(metric, v)
-
-    # calculate momentum vector; only need 1 and 4 components
-    # since currently u 2 and 3 are both 0
-    # TODO: create a momentum function
-    norm = metric[1,1]*metric[4,4] - metric[1,4]^2
-    pt = - (metric[4,4]*energy + metric[1,4]*angmom)
-    pϕ = metric[1,4]*energy + metric[1,1]*angmom
-
-    # make momentum vector
-    p = @SVector [
-        pt/norm, 0, 0, pϕ/norm
+    # reverse signs of the velocity vector
+    # since we're integrating backwards
+    p = @inbounds @SVector [
+        -v[1], 0, 0, -v[4]
     ]
 
     # TODO: this only works for Kerr
@@ -204,10 +163,56 @@ end
     1/g
 end
 
+function plunging_p_dot_u(E, a, M, L, Q, rms, r, sign_r)
+    inv(
+        uᵗ(M, rms, r, a) - uᶲ(M, rms, r, a) * L -
+        sign_r * uʳ(M, rms, r) * Σδr_δλ(E, L, M, Q, r, a) / Δ(M, r, a)
+    )
+end
+
+function plunging_p_dot_u(m::AbstractMetricParams{T}, u, v, rms) where {T} 
+    metric = GeodesicBase.metric(m, u)
+
+    # reverse signs of the velocity vector
+    # since we're integrating backwards
+    p = @inbounds @SVector [
+        -v[1], -v[2], 0, -v[4]
+    ]
+
+    u_disc = @inbounds @SVector [
+        uᵗ(m.M, rms, u[2], m.a), uʳ(m.M, rms, u[2]), 0, uᶲ(m.M, rms, u[2], m.a)
+    ]
+
+    @tullio g := metric[i,j] * (u_disc[i]) * p[j]
+    1/g
+end
+
+@inline function redshift_function(m::CarterMethodBL{T}, u, p, λ) where {T}
+    isco = rms(m.M, m.a)
+    if u[2] > isco
+        @inbounds regular_pdotu_inv(p.L, m.M, u[2], m.a, u[3])
+    else
+        # TODO: sign_r should be `sign_r = λ < p.λr_change ? -1 : 1`
+        # but at the moment, we don't track when this sign change happens
+        # needs to happen in CarterBoyerLindquist.jl 
+        sign_r = 1
+        @inbounds plunging_p_dot_u(m.E, m.a, m.M, p.L, p.Q, isco, u[2], sign_r)
+    end
+end
+
+@inline function redshift_function(m::AbstractMetricParams{T}, u, v) where {T}
+    isco = rms(m.M, m.a)
+    if u[2] > isco
+        regular_pdotu_inv(m, u, v)
+    else
+        plunging_p_dot_u(m, u, v, isco)
+    end
+end
+
 # value functions exports
 
 function _redshift_guard(m::CarterMethodBL{T}, sol, max_time; kwargs...) where {T}
-    redshift_function(m, sol.u[end], sol.prob.p)
+    redshift_function(m, sol.u[end], sol.prob.p, max_time)
 end
 function _redshift_guard(m::AbstractMetricParams{T}, sol, max_time; kwargs...) where {T}
     redshift_function(m, sol.u[end].x[2], sol.u[end].x[1])
