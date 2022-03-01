@@ -1,7 +1,3 @@
-#imports
-using Plots
-# using CarterBoyerLindquist
-
 #functions
 """
 From Reynolds (2020) (Eq2-4)
