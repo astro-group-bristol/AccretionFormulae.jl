@@ -10,3 +10,6 @@ GeodesicRendering = "dcac253f-9cde-4166-a841-20d11661ef48"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 Tullio = "bc48ee85-29a4-5162-ae0b-a64e1601d4bc"
+
+[compat]
+CarterBoyerLindquist = ">=0.1.2"
