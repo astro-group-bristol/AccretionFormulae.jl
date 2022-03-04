@@ -3,6 +3,7 @@ using AccretionGeometry
 using CarterBoyerLindquist
 using AccretionFormulae
 using StaticArrays
+using Printf
 
 using Plots
 gr()
@@ -11,6 +12,7 @@ function temperature(m, sol, max_time; kwargs...)
     g =  AccretionFormulae.redshift(m, sol, max_time; kwargs...)
 
     u = sol.u[end]
+    # @show(u[2])
 
     M = m.M*1.99e30
     # M = 5.0
@@ -61,11 +63,13 @@ function temperature_render(mass=1.0, spin=0.998;obs_angle=85.0, disc_angle=90.0
 
     # plot
     scale = 1e4
+    scalestr = @sprintf "%.E" scale
     new_img = reverse(img, dims=1)
     new_img ./= scale
 
-    heatmap(new_img, aspect_ratio=1.0, size=(resolution*3/2, resolution))
-    title!("Temperature $scale, $(m.M)")
+    heatmap(new_img, aspect_ratio=1.0, size=(resolution*3/2, resolution), clim=(0,40))
+    # contour(new_img, aspect_ratio=1.0, size=(resolution*3/2, resolution), clim=(0,40))
+    title!("Temperature Scale = $scalestr, Relative Mass = $(m.M)")
 end
 
-temperature_render(obs_angle=85.0, size_multiplier=2)
+temperature_render(obs_angle=85.0)
