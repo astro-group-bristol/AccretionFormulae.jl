@@ -35,6 +35,12 @@ function flux(r, a_star, M)
 end
 
 function mdot(M)
+    # need something here to convert M into SI units, as M_☼ is in SI, althought we 
+    # aren't currently clear about what the units M currently is in
+    # would look something like:
+    # M_kg = M*c^2
+    # L_edd = 3e4*L_☼*(M_kg/M_☼)
+
     L_edd = 3e4*L_☼*(M/M_☼)
     Mdot = -L_edd/(c^2*η)
     mdot = -0.1*Mdot
