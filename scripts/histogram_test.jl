@@ -53,6 +53,12 @@ function temperature_render(;mass=1, spin=0.998, obs_angle=85.0, disc_angle=90.0
         ∘ ConstValueFunctions.filter_early_term
     )
 
+    redshift_vf = (
+        ValueFunction(AccretionFormulae.redshift)
+        ∘ FilterValueFunction((m, sol, max_time; kwargs...) -> sol.u[end][2] > R_isco, NaN)
+        ∘ ConstValueFunctions.filter_early_term   
+    )
+
     # do the render
     temperature_img = @time rendergeodesics(
         m, u, 2000.0, 
@@ -74,6 +80,15 @@ function temperature_render(;mass=1, spin=0.998, obs_angle=85.0, disc_angle=90.0
         dtmax = dtmax
     )
 
+    redshift_img = @time rendergeodesics(
+        m, u, 2000.0, 
+        d, 
+        fov_factor=fov*size_multiplier, abstol=tolerance, reltol=tolerance,
+        image_width = 350*size_multiplier,
+        image_height = 250*size_multiplier,
+        vf = redshift_vf,
+        dtmax = dtmax
+    )
     # correcting for physical mass
     M_phys = mass*1.99e30
     r_isco_phys = AccretionFormulae.r_isco(M_phys, 0.998)
@@ -96,11 +111,40 @@ function temperature_render(;mass=1, spin=0.998, obs_angle=85.0, disc_angle=90.0
     new_img = reverse(temperature_img, dims=1)
     new_img ./= scale
 
-    heatmap(new_img, aspect_ratio=1.0, size=(resolution*3/2, resolution), 
-    clim=(0,3)
-    )
-    # contour(new_img, aspect_ratio=1.0, size=(resolution*3/2, resolution), clim=(0,3))
-    title!("Temperature Scale = $scalestr, Mass = $mass M_☼")
+    # hm = heatmap(new_img, aspect_ratio=1.0, size=(resolution*3/2, resolution), 
+    # clim=(0,3)
+    # )
+    # # contour(new_img, aspect_ratio=1.0, size=(resolution*3/2, resolution), clim=(0,3))
+    # title!("Temperature Scale = $scalestr, Mass = $mass M_☼")
+    # # display(hm)
+    return temperature_img, redshift_img
 end
 
-temperature_render(obs_angle=85.0, mass=1)
+
+function energy_histogram(;obs_angle=85.0)
+    temperature_img, redshift_img = temperature_render(obs_angle=obs_angle)
+
+
+    # constants
+    h = 6.63e-34
+    c = 3e8
+
+    lines=[]
+    for (i, x) in enumerate(temperature_img)
+        for (j, y) in enumerate(x)
+            g = redshift_img[i][j]
+            energy = 5.52e18*h*c*y
+            # @show(energy)
+            push!(lines, energy*g^4)
+        end
+
+    end
+
+    histogram(lines, 
+            xlims=(0,10),
+            nbins=1000)
+    title!("Observation Angle = $obs_angle")
+    # temperature_render(obs_angle=85.0, mass=1)
+end
+
+energy_histogram()
