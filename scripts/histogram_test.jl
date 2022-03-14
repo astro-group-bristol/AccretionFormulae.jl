@@ -2,6 +2,7 @@ using GeodesicRendering
 using AccretionGeometry
 using CarterBoyerLindquist
 using AccretionFormulae
+# includet("C:\\Users\\Dan\\Documents\\Uni\\Year 4\\Project\\GitHub\\DevEnv\\dev\\AccretionFormulae\\src\\AccretionFormulae.jl")
 using StaticArrays
 using Printf
 
@@ -117,34 +118,81 @@ function temperature_render(;mass=1, spin=0.998, obs_angle=85.0, disc_angle=90.0
     # # contour(new_img, aspect_ratio=1.0, size=(resolution*3/2, resolution), clim=(0,3))
     # title!("Temperature Scale = $scalestr, Mass = $mass M_☼")
     # # display(hm)
-    return temperature_img, redshift_img
+    return temperature_img, redshift_img, radius_img, M_phys, spin
 end
 
 
-function energy_histogram(;obs_angle=85.0)
-    temperature_img, redshift_img = temperature_render(obs_angle=obs_angle)
-
-
+function energy_histogram(;obs_angle=85.0)    
     # constants
     h = 6.63e-34
     c = 3e8
+    G = 6.67e-11
 
-    lines=[]
+    temperature_img, redshift_img, radius_img, M_phys, spin = temperature_render(obs_angle=obs_angle, spin=0.5)
+    halfway_index = Int32(size(radius_img, 1)/2)
+    row = radius_img[[halfway_index],:]
+    indices = []
+    for (i, val) in enumerate(row)
+        if isnan(val)
+        else
+            push!(indices, i)
+        end
+    end
+    x1 = minimum(indices)
+    x2 = maximum(indices)
+    R = 50.0
+    pixel_length = (2*R/(x2-x1))
+    @show(pixel_length)
+    # finding the most appropriate row
+    # @show(radius_img[[1],:])
+    # for i in 1:1:size(radius_img, 1)
+    #     # i = Int32(i)
+    #     row = radius_img[[i],:]
+    #     filter!(row->!isnan(row), row)
+    #     @show(i)
+    #     @show(length(filtered_row[2]))
+    # end
+
+
+    pixel_energies=[]
+    m_dot = AccretionFormulae.mdot(M_phys)
+    e_min = 5
+    e_max = 10
+    n_bins = 10000
+    bins = zeros(n_bins)
+    # @show(bins)
     for (i, x) in enumerate(temperature_img)
         for (j, y) in enumerate(x)
             g = redshift_img[i][j]
-            energy = 5.52e18*h*c*y
+            radius = radius_img[i][j]
+            # @show(radius)
+            flux = AccretionFormulae.diss(m_dot, radius, spin, 1)
+            flux_per_area = flux/(pixel_length^2)
+            # @show(flux_per_area)
+            energy = g*6.4
+            if energy < e_max
+                if energy > e_min
+                    big_energy = energy*(n_bins/e_max)
+                    bin = Int32(round(big_energy-0.5))
+                    # @show(bin)
+                    bins[bin] += flux
+                    # push!(pixel_energies, flux_per_area*g^4)    
+                end
+            end
             # @show(energy)
-            push!(lines, energy*g^4)
+            
         end
 
     end
+    @show(bins)
+    # histogram(bins, 
+            # xlims=(0,10),
+            # nbins=100)
 
-    histogram(lines, 
-            xlims=(0,10),
-            nbins=1000)
+    x_vals = LinRange(e_min,e_max,n_bins)
+    plot(x_vals,bins)
     title!("Observation Angle = $obs_angle")
     # temperature_render(obs_angle=85.0, mass=1)
 end
 
-energy_histogram()
+energy_histogram(obs_angle=30)
