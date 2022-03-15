@@ -39,7 +39,6 @@ function temperature_render(;mass=1, spin=0.998, obs_angle=85.0, disc_angle=90.0
     # disc
     d = GeometricThinDisc(R_isco+1, 50.0, deg2rad(disc_angle))
 
-
     # create and compose the ValueFunctions
     temperature_vf = (
         ValueFunction(temperature)
@@ -65,7 +64,7 @@ function temperature_render(;mass=1, spin=0.998, obs_angle=85.0, disc_angle=90.0
         d, 
         fov_factor=fov*size_multiplier, abstol=tolerance, reltol=tolerance,
         image_width = 350*size_multiplier,
-        image_height = 250*size_multiplier,
+        image_height = 350*size_multiplier,
         vf = temperature_vf,
         dtmax = dtmax
     )
@@ -75,7 +74,7 @@ function temperature_render(;mass=1, spin=0.998, obs_angle=85.0, disc_angle=90.0
         d, 
         fov_factor=fov*size_multiplier, abstol=tolerance, reltol=tolerance,
         image_width = 350*size_multiplier,
-        image_height = 250*size_multiplier,
+        image_height = 350*size_multiplier,
         vf = radius_vf,
         dtmax = dtmax
     )
@@ -85,7 +84,7 @@ function temperature_render(;mass=1, spin=0.998, obs_angle=85.0, disc_angle=90.0
         d, 
         fov_factor=fov*size_multiplier, abstol=tolerance, reltol=tolerance,
         image_width = 350*size_multiplier,
-        image_height = 250*size_multiplier,
+        image_height = 350*size_multiplier,
         vf = redshift_vf,
         dtmax = dtmax
     )
@@ -117,34 +116,48 @@ function temperature_render(;mass=1, spin=0.998, obs_angle=85.0, disc_angle=90.0
     # # contour(new_img, aspect_ratio=1.0, size=(resolution*3/2, resolution), clim=(0,3))
     # title!("Temperature Scale = $scalestr, Mass = $mass M_☼")
     # # display(hm)
-    return temperature_img, redshift_img
+    return temperature_img, redshift_img, radius_img
 end
 
 
-function energy_histogram(;obs_angle=85.0)
-    temperature_img, redshift_img = temperature_render(obs_angle=obs_angle)
+function energy_histogram(;obs_angle=30.0)
+    temperature_img, redshift_img, radius_img = temperature_render(obs_angle=obs_angle, size_multiplier=6, fov=6.0, tolerance=1.0E-9)
 
+    # Define an energy array and a line profile array
+    n_energies = 100
+    # Minimum energy in keV
+    e_min = 1.0
+    # Maximum energy in keV
+    e_max = 10.0
+    energies = range(e_min, stop=e_max, length=n_energies)
+    lineProfile = zeros(n_energies)
 
-    # constants
-    h = 6.63e-34
-    c = 3e8
+    # Define inner and outer radius of disk (could do this direclty using GeometricThinDisc)
+    r_in = 5.0
+    r_out = 10.0
 
-    lines=[]
     for (i, x) in enumerate(temperature_img)
         for (j, y) in enumerate(x)
             g = redshift_img[i][j]
-            energy = 5.52e18*h*c*y
-            # @show(energy)
-            push!(lines, energy*g^4)
+            if !isnan(g)
+                en = 6.4 * g
+                index = trunc(Int, 1 + (en-e_min)*(n_energies-1)/(e_max-e_min))
+                if (index >= 1) && (index <= n_energies)
+                    # Example line profile where the emissivity is proportional to radius^-3 (an arbitrary choice)
+                    if (radius_img[i][j] > r_in) && (radius_img[i][j] < r_out)
+                        lineProfile[index] += radius_img[i][j]^-3 * g^4
+                    end
+                end
+            end
         end
-
     end
 
-    histogram(lines, 
-            xlims=(0,10),
-            nbins=1000)
-    title!("Observation Angle = $obs_angle")
-    # temperature_render(obs_angle=85.0, mass=1)
+    # plot line profile
+    plot(energies, lineProfile, label=string(obs_angle), xlabel="Energy", ylabel="Line flux (arbitrary units)")
+
+    # plot r image
+    # heatmap(radius_img, aspect_ratio=1.0, clim=(0,50))
+
 end
 
 energy_histogram()
