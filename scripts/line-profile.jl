@@ -15,7 +15,7 @@ m = CarterMethodBL(M=1.0, a=1.0)
 risco = AccretionFormulae.r_isco(m.a, m.M)
 d = GeometricThinDisc(risco, 50.0, deg2rad(90))
 
-u = @SVector [0.0, 1000.0, deg2rad(60), 0.0]
+u = @SVector [0.0, 1000.0, deg2rad(30), 0.0]
 
 cache = @time prerendergeodesics(
     m,
