@@ -1,5 +1,5 @@
 # imports
-include("histogram_test_2.jl")
+include("histogram_test_andy_method.jl")
 using Measures
 
 # initialising plot backend

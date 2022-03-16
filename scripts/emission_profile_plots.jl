@@ -101,4 +101,8 @@ changing_spin_plot = plot(
     linestyle = styles
     )
 
-plot(changing_mass_plot, changing_spin_plot, layout=(1,2), size=multiplier.*(1200,400))
+combined_plot = plot(changing_mass_plot, changing_spin_plot, layout=(1,2), size=multiplier.*(1200,400))
+
+# saving image
+png(combined_plot, "emission_profiles.png")
+display(combined_plot)

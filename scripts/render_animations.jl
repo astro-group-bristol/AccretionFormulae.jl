@@ -1,13 +1,23 @@
 include("temperature_render.jl")
 
-# angles = 75.0:1.0:85.0
-# angles = [-179.0:1.0:-1.0;1.0:1.0:179.0]
-masses = 1.0:5.0:200
-n_frames = length(masses)
-anim = @animate for (i, mass) in enumerate(masses)
+# choosing the range to animate over
+# vars = 75.0:1.0:85.0 # changing angle small
+# vars = [-179.0:1.0:-1.0;1.0:1.0:179.0] # changing angle full
+vars = 1.0:5.0:200 # changing mass
+
+# generating frames
+n_frames = length(vars)
+anim = @animate for (i, var) in enumerate(vars)
     print("Frame: $i / $n_frames complete")
-    # fangle = Float64(angle)
-    fmass = Float64(mass)
-    temperature_render(mass=mass, tolerance=1e-10, resolution=1080, size_multiplier=4, dtmax=2.5)
+    fvar = Float64(var)
+    temperature_render(
+                        mass=var, 
+                        tolerance=1e-10, 
+                        resolution=1080, 
+                        size_multiplier=4, 
+                        dtmax=2.5
+                        )
 end
-gif(anim, "massgif.gif", fps=20)
+
+# saving animation
+gif(anim, "gif.gif", fps=20)
