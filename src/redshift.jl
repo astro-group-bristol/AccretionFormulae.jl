@@ -147,44 +147,45 @@ end
     metric = GeodesicBase.metric(m, u)
     # reverse signs of the velocity vector
     # since we're integrating backwards
-    p = @inbounds @SVector [
-        -v[1], 0, 0, -v[4]
-    ]
+    p = @inbounds @SVector [-v[1], 0, 0, -v[4]]
 
     # TODO: this only works for Kerr
-    disc_norm = (AccretionFormulae.eⱽ(m.M, u[2], m.a, u[3]) * √(1 - AccretionFormulae.Vₑ(m.M, u[2], m.a, u[3])^2))
+    disc_norm = (
+        AccretionFormulae.eⱽ(m.M, u[2], m.a, u[3]) *
+        √(1 - AccretionFormulae.Vₑ(m.M, u[2], m.a, u[3])^2)
+    )
 
-    u_disc = @SVector [
-        1/disc_norm, 0, 0, AccretionFormulae.Ωₑ(m.M, u[2], m.a)/disc_norm
-    ]
+    u_disc =
+        @SVector [1 / disc_norm, 0, 0, AccretionFormulae.Ωₑ(m.M, u[2], m.a) / disc_norm]
 
     # use Tullio to do the einsum
-    @tullio g := metric[i,j] * (u_disc[i]) * p[j]
-    1/g
+    @tullio g := metric[i, j] * (u_disc[i]) * p[j]
+    1 / g
 end
 
 function plunging_p_dot_u(E, a, M, L, Q, rms, r, sign_r)
     inv(
         uᵗ(M, rms, r, a) - uᶲ(M, rms, r, a) * L -
-        sign_r * uʳ(M, rms, r) * Σδr_δλ(E, L, M, Q, r, a) / Δ(M, r, a)
+        sign_r * uʳ(M, rms, r) * Σδr_δλ(E, L, M, Q, r, a) / Δ(M, r, a),
     )
 end
 
-function plunging_p_dot_u(m::AbstractMetricParams{T}, u, v, rms) where {T} 
+function plunging_p_dot_u(m::AbstractMetricParams{T}, u, v, rms) where {T}
     metric = GeodesicBase.metric(m, u)
 
     # reverse signs of the velocity vector
     # since we're integrating backwards
-    p = @inbounds @SVector [
-        -v[1], -v[2], 0, -v[4]
-    ]
+    p = @inbounds @SVector [-v[1], -v[2], 0, -v[4]]
 
     u_disc = @inbounds @SVector [
-        uᵗ(m.M, rms, u[2], m.a), uʳ(m.M, rms, u[2]), 0, uᶲ(m.M, rms, u[2], m.a)
+        uᵗ(m.M, rms, u[2], m.a),
+        uʳ(m.M, rms, u[2]),
+        0,
+        uᶲ(m.M, rms, u[2], m.a),
     ]
 
-    @tullio g := metric[i,j] * (u_disc[i]) * p[j]
-    1/g
+    @tullio g := metric[i, j] * u_disc[i] * p[j]
+    1 / g
 end
 
 @inline function redshift_function(m::CarterMethodBL{T}, u, p, λ) where {T}
@@ -209,13 +210,17 @@ end
     end
 end
 
-# value functions exports
+# point functions exports
 
-function _redshift_guard(m::CarterMethodBL{T}, sol, max_time; kwargs...) where {T}
-    redshift_function(m, sol.u[end], sol.prob.p, max_time)
+function _redshift_guard(
+    m::CarterMethodBL{T},
+    gp::CarterGeodesicPoint{T},
+    max_time,
+) where {T}
+    redshift_function(m, gp.u, gp.p, gp.t)
 end
-function _redshift_guard(m::AbstractMetricParams{T}, sol, max_time; kwargs...) where {T}
-    redshift_function(m, sol.u[end].x[2], sol.u[end].x[1])
+function _redshift_guard(m::AbstractMetricParams{T}, gp, max_time) where {T}
+    redshift_function(m, gp.u, gp.v)
 end
 
-const redshift = ValueFunction(_redshift_guard)
+const redshift = PointFunction(_redshift_guard)
