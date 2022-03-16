@@ -1,7 +1,7 @@
 name = "AccretionFormulae"
 uuid = "31bec1c3-7af2-4563-a2e0-d36728d7d927"
 authors = ["dangoh123", "kyle8mcknight <kyle-mcknight@hotmail.com>", "fjebaker <fergusbkr@gmail.com>", "phajy <andy.young@bristol.ac.uk>"]
-version = "0.1.1"
+version = "0.2.1"
 
 [deps]
 AccretionGeometry = "7f85384a-175b-40eb-971c-1f0b02ab1b9a"
@@ -15,3 +15,4 @@ Tullio = "bc48ee85-29a4-5162-ae0b-a64e1601d4bc"
 
 [compat]
 CarterBoyerLindquist = ">=0.1.2"
+GeodesicRendering = ">=0.2.1"

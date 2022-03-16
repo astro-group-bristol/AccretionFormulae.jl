@@ -8,6 +8,12 @@ anim = @animate for (i, mass) in enumerate(masses)
     print("Frame: $i / $n_frames complete")
     # fangle = Float64(angle)
     fmass = Float64(mass)
-    temperature_render(mass=mass, tolerance=1e-10, resolution=1080, size_multiplier=4, dtmax=2.5)
+    temperature_render(
+        mass = mass,
+        tolerance = 1e-10,
+        resolution = 1080,
+        size_multiplier = 4,
+        dtmax = 2.5,
+    )
 end
-gif(anim, "massgif.gif", fps=20)
+gif(anim, "massgif.gif", fps = 20)
