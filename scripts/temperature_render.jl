@@ -8,19 +8,17 @@ using Printf
 using Plots
 gr()
 
-function temperature(m, sol, max_time; kwargs...)
-    g =  AccretionFormulae.redshift(m, sol, max_time; kwargs...)
+function temperature(m, gp, max_time; kwargs...)
+    g =  AccretionFormulae.redshift(m, gp, max_time; kwargs...)
 
-    u = sol.u[end]
     M = m.M
     a_star = m.a
-    temperature = AccretionFormulae.observed_temperature(u[2], a_star, M, g)
+    temperature = AccretionFormulae.observed_temperature(gp.u[2], a_star, M, g)
     
 end
 
-function radius(m, sol, max_time; kwargs...)
-    u = sol.u[end]
-    radius = u[2]
+function radius(m, gp, max_time; kwargs...)
+    gp.u[2]
 end
 
 function temperature_render(;mass=1, spin=0.998, obs_angle=85.0, disc_angle=90.0, 
@@ -40,39 +38,31 @@ function temperature_render(;mass=1, spin=0.998, obs_angle=85.0, disc_angle=90.0
     d = GeometricThinDisc(R_isco+1, 50.0, deg2rad(disc_angle))
 
 
-    # create and compose the ValueFunctions
+    # cache the render
+    cache = @time prerendergeodesics(
+        m, u, 2000.0, 
+        d, 
+        fov_factor=fov*size_multiplier, abstol=tolerance, reltol=tolerance,
+        image_width = 350*size_multiplier,
+        image_height = 250*size_multiplier,
+        dtmax = dtmax
+    )
+
+    # create and compose the PointFunctions
     temperature_vf = (
-        ValueFunction(temperature)
-        ∘ FilterValueFunction((m, sol, max_time; kwargs...) -> sol.u[end][2] > R_isco, NaN)
-        ∘ ConstValueFunctions.filter_early_term
+        PointFunction(temperature)
+        ∘ FilterPointFunction((m, gp, max_time; kwargs...) -> gp.u[2] > R_isco, NaN)
+        ∘ ConstPointFunctions.filter_early_term
     )
 
     radius_vf = (
-        ValueFunction(radius)
-        ∘ FilterValueFunction((m, sol, max_time; kwargs...) -> sol.u[end][2] > R_isco, NaN)
-        ∘ ConstValueFunctions.filter_early_term
+        PointFunction(radius)
+        ∘ FilterPointFunction((m, gp, max_time; kwargs...) -> gp.u[2] > R_isco, NaN)
+        ∘ ConstPointFunctions.filter_early_term
     )
 
-    # do the render
-    temperature_img = @time rendergeodesics(
-        m, u, 2000.0, 
-        d, 
-        fov_factor=fov*size_multiplier, abstol=tolerance, reltol=tolerance,
-        image_width = 350*size_multiplier,
-        image_height = 250*size_multiplier,
-        vf = temperature_vf,
-        dtmax = dtmax
-    )
-
-    radius_img = @time rendergeodesics(
-        m, u, 2000.0, 
-        d, 
-        fov_factor=fov*size_multiplier, abstol=tolerance, reltol=tolerance,
-        image_width = 350*size_multiplier,
-        image_height = 250*size_multiplier,
-        vf = radius_vf,
-        dtmax = dtmax
-    )
+    radius_img = GeodesicRendering.apply(radius_vf, cache)
+    temperature_img = GeodesicRendering.apply(temperature_vf, cache)
 
     # correcting for physical mass
     M_phys = mass*1.99e30
