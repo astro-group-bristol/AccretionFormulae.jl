@@ -175,7 +175,7 @@ function plunging_p_dot_u(m::AbstractMetricParams{T}, u, v, rms) where {T}
 
     # reverse signs of the velocity vector
     # since we're integrating backwards
-    p = @inbounds @SVector [-v[1], -v[2], 0, -v[4]]
+    p = @inbounds @SVector [-v[1], v[2], 0, -v[4]]
 
     u_disc = @inbounds @SVector [
         uᵗ(m.M, rms, u[2], m.a),
@@ -193,10 +193,12 @@ end
     if u[2] > isco
         @inbounds regular_pdotu_inv(p.L, m.M, u[2], m.a, u[3])
     else
-        # TODO: sign_r should be `sign_r = λ < p.λr_change ? -1 : 1`
-        # but at the moment, we don't track when this sign change happens
-        # needs to happen in CarterBoyerLindquist.jl 
-        sign_r = 1
+        # change sign if we're after the sign flip
+        # TODO: this isn't robust to multiple sign changes 
+        # TODO: i feel like there should be a better way than checking this with two conditions
+        #       used to have λ > p.changes[1] to make sure we're ahead of the time flip (but when wouldn't we be???)
+        #       now p.changes[1] > 0.0 to make sure there was a time flip at all
+        sign_r = (p.changes[1] > 0.0 ? 1 : -1) * p.r
         @inbounds plunging_p_dot_u(m.E, m.a, m.M, p.L, p.Q, isco, u[2], sign_r)
     end
 end
