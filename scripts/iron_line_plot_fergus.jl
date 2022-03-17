@@ -19,7 +19,8 @@ gr(
     yguidefontsize=font_size,
     size=size,
     tickfontsize=font_size,
-    thickness_scaling=1
+    thickness_scaling=1,
+    legend=:topleft
     )
 
 """
@@ -37,8 +38,8 @@ function label(value, name, units)
 end
 
 # values to change
-vars = 5:20:85 # obs angles
-# vars=[5,15]
+# vars = 5:20:85 # obs angles
+vars=[5,15]
 # vars = [0.0,0.25,0.50,0.75,0.998] # spins
 
 # values to be plotted
@@ -52,7 +53,7 @@ for var in vars
                                             # spin=var,
                                             # obs_angle=40.0,
                                             obs_angle=var,
-                                            size_multiplier=4, 
+                                            size_multiplier=1, 
                                             fov=10, 
                                             # tolerance=1e-9, 
                                             # dtmax=50
@@ -61,7 +62,7 @@ for var in vars
     # lineProfile = lineProfile ./ scale
     push!(energy_vals, energies)
     push!(line_profiles, lineProfile)
-    histogram!(energies, weights=lineProfile)
+    histogram!(energies, weights=lineProfile, label="OA = $var")
 end
 
 # legend labels, colours and styles
