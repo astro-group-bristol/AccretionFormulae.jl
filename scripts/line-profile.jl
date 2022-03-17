@@ -21,7 +21,7 @@ function energy_histogram_ferg(;
                             spin=0.998,
                             fov=9.0,
                             tolerance=1e-9,
-                            size_multiplier=12,
+                            size_multiplier=4,
                             dtmax=1000
                         )
     m = CarterMethodBL(M=1.0, a=spin)
@@ -67,6 +67,7 @@ function energy_histogram_ferg(;
     # use `vec` to flatten the matrix into a 1d array
     his = histogram(vec(energy), weights=vec(line_flux), legend=false)
     display(his)
+    png(hist, "histogram_method.png")
     yaxis!("Line Flux")
     xaxis!("Energy")
 end
