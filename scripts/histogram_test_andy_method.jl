@@ -105,10 +105,10 @@ function temperature_render(;mass=1, spin=0.998, obs_angle=85.0, disc_angle=90.0
     # scale = 10^scale
     
     # scaling image
-    scale = 1e7
-    scalestr = @sprintf "%.E" scale
-    new_img = reverse(temperature_img, dims=1)
-    new_img ./= scale
+    # scale = 1e7
+    # scalestr = @sprintf "%.E" scale
+    # new_img = reverse(temperature_img, dims=1)
+    # new_img ./= scale
 
     # hm = heatmap(new_img, aspect_ratio=1.0, size=(resolution*3/2, resolution), 
     # clim=(0,3)
@@ -116,13 +116,18 @@ function temperature_render(;mass=1, spin=0.998, obs_angle=85.0, disc_angle=90.0
     # # contour(new_img, aspect_ratio=1.0, size=(resolution*3/2, resolution), clim=(0,3))
     # title!("Temperature Scale = $scalestr, Mass = $mass M_☼")
     # # display(hm)
-    return temperature_img, redshift_img, radius_img
+    return temperature_img, redshift_img, radius_img, M_phys
 end
 
 
-function energy_histogram(;obs_angle=30.0)
-    temperature_img, redshift_img, radius_img = temperature_render(obs_angle=obs_angle, size_multiplier=6, fov=6.0, tolerance=1.0E-9)
-
+function energy_histogram(;obs_angle=30.0, spin=0.998, size_multiplier=1, fov=6.0, tolerance=1e-8, dtmax=1000)
+    temperature_img, redshift_img, radius_img, M_phys= temperature_render(obs_angle=obs_angle,
+                                                                                spin=spin, 
+                                                                                size_multiplier=size_multiplier,
+                                                                                fov=fov, 
+                                                                                tolerance=tolerance,
+                                                                                dtmax=dtmax)
+    m_dot = AccretionFormulae.mdot(M_phys)
     # Define an energy array and a line profile array
     n_energies = 100
     # Minimum energy in keV
@@ -131,8 +136,8 @@ function energy_histogram(;obs_angle=30.0)
     e_max = 10.0
     energies = range(e_min, stop=e_max, length=n_energies)
     lineProfile = zeros(n_energies)
-
-    # Define inner and outer radius of disk (could do this direclty using GeometricThinDisc)
+    
+    # Define inner and outer radius of disk (could do this direclty using GeometricThinDisc)
     r_in = 5.0
     r_out = 10.0
 
@@ -145,7 +150,7 @@ function energy_histogram(;obs_angle=30.0)
                 if (index >= 1) && (index <= n_energies)
                     # Example line profile where the emissivity is proportional to radius^-3 (an arbitrary choice)
                     if (radius_img[i][j] > r_in) && (radius_img[i][j] < r_out)
-                        lineProfile[index] += radius_img[i][j]^-3 * g^4
+                        lineProfile[index] += AccretionFormulae.diss(m_dot, radius_img[i][j], spin, 1)* g^4
                     end
                 end
             end
@@ -153,11 +158,21 @@ function energy_histogram(;obs_angle=30.0)
     end
 
     # plot line profile
-    plot(energies, lineProfile, label=string(obs_angle), xlabel="Energy", ylabel="Line flux (arbitrary units)")
 
+    # scale = maximum(filter(!isnan,lineProfile))
+    # scale = floor(log(10, scale))
+    # scale = 10^scale
+    # lineProfile /= scale
+    # profile = plot(energies, lineProfile, label=string(obs_angle), xlabel="Energy", ylabel="Line flux (arbitrary units)")
+    # display(profile)
     # plot r image
     # heatmap(radius_img, aspect_ratio=1.0, clim=(0,50))
+    return energies, lineProfile
 
 end
 
-energy_histogram()
+# energy_histogram(spin=0.5)
+# obs_angles = 10:10:90
+# for obs_angle in obs_angles
+#     energy_histogram(obs_angle=obs_angle)
+# end

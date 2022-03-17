@@ -97,7 +97,8 @@ function temperature_render(;mass=1, spin=0.998, obs_angle=85.0, disc_angle=90.0
     new_img ./= scale
 
     heatmap(new_img, aspect_ratio=1.0, size=(resolution*3/2, resolution), 
-    clim=(0,3)
+    clim=(0,3),
+    colorbar=:left
     )
     # contour(new_img, aspect_ratio=1.0, size=(resolution*3/2, resolution), clim=(0,3))
     title!("Temperature Scale = $scalestr, Mass = $mass M_☼")
