@@ -21,7 +21,7 @@ function energy_histogram_ferg(;
                             spin=0.998,
                             fov=9.0,
                             tolerance=1e-9,
-                            size_multiplier=10,
+                            size_multiplier=12,
                             dtmax=1000
                         )
     m = CarterMethodBL(M=1.0, a=spin)
