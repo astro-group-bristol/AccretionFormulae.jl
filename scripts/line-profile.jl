@@ -65,11 +65,13 @@ function energy_histogram_ferg(;
     energy = (redshift_img .* 6.4)[mask]
 
     # use `vec` to flatten the matrix into a 1d array
-    his = histogram(vec(energy), weights=vec(line_flux), legend=false)
-    display(his)
-    png(hist, "histogram_method.png")
-    yaxis!("Line Flux")
-    xaxis!("Energy")
+    return vec(energy), vec(line_flux)
+
+    # his = histogram(vec(energy), weights=vec(line_flux), legend=false)
+    # display(his)
+    # png(his, "histogram_method.png")
+    # yaxis!("Line Flux")
+    # xaxis!("Energy")
 end
 
 
