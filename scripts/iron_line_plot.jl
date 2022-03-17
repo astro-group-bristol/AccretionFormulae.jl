@@ -37,34 +37,33 @@ function label(value, name, units)
 end
 
 # values to change
-# obs_angles = 10:10:90
-spins = [0.0,0.25,0.50,0.75,0.998]
+vars = 5:20:85 # obs angles
+# vars = [0.0,0.25,0.50,0.75,0.998] # spins
 
 # values to be plotted
 energy_vals = []
 line_profiles = []
 
 # generating data for different spins
-for spin in spins
+for var in vars
     energies, lineProfile = energy_histogram(
-                                            spin=spin, 
-                                            obs_angle=40.0, 
+                                            spin=0.998,
+                                            # spin=var,
+                                            # obs_angle=40.0,
+                                            obs_angle=var,
                                             size_multiplier=3, 
-                                            fov=6.0, 
-                                            tolerance=1e-9, 
-                                            dtmax=50
+                                            fov=10, 
+                                            # tolerance=1e-9, 
+                                            # dtmax=50
                                             )
-    scale = maximum(lineProfile)
-    @show(scale)
-    @show(lineProfile)
-    lineProfile = lineProfile ./ scale
-    @show(lineProfile)
+    # scale = maximum(lineProfile)
+    # lineProfile = lineProfile ./ scale
     push!(energy_vals, energies)
     push!(line_profiles, lineProfile)
 end
 
 # legend labels, colours and styles
-labels = permutedims(label.(spins, "Spin",""))
+labels = permutedims(label.(vars, "OA",""))
 styles = [:solid :dash :dot :dashdot :dashdotdot]
 colors = [:black :blue :red :green :purple]
 
@@ -73,17 +72,17 @@ verticle_line_x = fill(6.4, 100)
 verticle_line_y = LinRange(-1, maximum(last(line_profiles*1.2)), 100)
 
 # plots
-iron_line_plot = plot(
-            last(energy_vals), 
-            line_profiles, 
+iron_line_plot = histogram(
+            energy_vals, 
+            weights=line_profiles, 
             linestyle=styles, 
-            xlims=(4,7.5), 
-            ylims=(0,maximum(last(line_profiles*1.1))), 
-            label=labels,
-            linecolor=colors,
-            legend=:topleft,
-            xlabel="Energy (keV)",
-            ylabel="Flux (Arbitrary Units)"
+            # xlims=(4,7.5), 
+            # # ylims=(0,maximum(last(line_profiles*1.1))), 
+            # label=labels,
+            # linecolor=colors,
+            # legend=:bottomleft,
+            # xlabel="Energy (keV)",
+            # ylabel="Flux (Arbitrary Units)"
             )
 
 # vertical plot
@@ -93,8 +92,8 @@ plot!(
     linestyle=:dash, 
     linecolor=:black, 
     label=false, 
-    xlims=(4,7.5), 
-    ylims=(0,maximum(last(line_profiles*1.1))),
+    # xlims=(4,7.5), 
+    # ylims=(0,maximum(last(line_profiles*1.1))),
     lw=2*multiplier
     )
 
