@@ -72,17 +72,17 @@ verticle_line_x = fill(6.4, 100)
 verticle_line_y = LinRange(-1, maximum(last(line_profiles*1.2)), 100)
 
 # plots
-iron_line_plot = histogram(
-            energy_vals, 
-            weights=line_profiles, 
+iron_line_plot = plot(
+            last(energy_vals), 
+            line_profiles, 
             linestyle=styles, 
             # xlims=(4,7.5), 
-            # # ylims=(0,maximum(last(line_profiles*1.1))), 
-            # label=labels,
-            # linecolor=colors,
-            # legend=:bottomleft,
-            # xlabel="Energy (keV)",
-            # ylabel="Flux (Arbitrary Units)"
+            # ylims=(0,maximum(last(line_profiles*1.1))), 
+            label=labels,
+            linecolor=colors,
+            legend=:bottomleft,
+            xlabel="Energy (keV)",
+            ylabel="Flux (Arbitrary Units)"
             )
 
 # vertical plot

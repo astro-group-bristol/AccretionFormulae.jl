@@ -38,12 +38,13 @@ end
 
 # values to change
 vars = 5:20:85 # obs angles
+# vars=[5,15]
 # vars = [0.0,0.25,0.50,0.75,0.998] # spins
 
 # values to be plotted
 energy_vals = []
 line_profiles = []
-
+hist = histogram()
 # generating data for different spins
 for var in vars
     energies, lineProfile = energy_histogram_ferg(
@@ -51,7 +52,7 @@ for var in vars
                                             # spin=var,
                                             # obs_angle=40.0,
                                             obs_angle=var,
-                                            size_multiplier=3, 
+                                            size_multiplier=4, 
                                             fov=10, 
                                             # tolerance=1e-9, 
                                             # dtmax=50
@@ -60,6 +61,7 @@ for var in vars
     # lineProfile = lineProfile ./ scale
     push!(energy_vals, energies)
     push!(line_profiles, lineProfile)
+    histogram!(energies, weights=lineProfile)
 end
 
 # legend labels, colours and styles
@@ -69,21 +71,23 @@ colors = [:black :blue :red :green :purple]
 
 # adding a line to represent the lab frame 6.4 keV emission line
 verticle_line_x = fill(6.4, 100)
-verticle_line_y = LinRange(-1, maximum(last(line_profiles*1.2)), 100)
+verticle_line_y = LinRange(0, maximum(last(line_profiles*1.2)), 100)
 
 # plots
-iron_line_plot = plot(
-            last(energy_vals), 
-            line_profiles, 
-            linestyle=styles, 
-            # xlims=(4,7.5), 
-            # ylims=(0,maximum(last(line_profiles*1.1))), 
-            label=labels,
-            linecolor=colors,
-            legend=:bottomleft,
-            xlabel="Energy (keV)",
-            ylabel="Flux (Arbitrary Units)"
-            )
+# iron_line_plot = histogram(
+#             last(energy_vals), 
+#             weights=last(line_profiles), 
+#             # linestyle=styles, 
+#             # xlims=(4,7.5), 
+#             # ylims=(0,maximum(last(line_profiles*1.1))), 
+#             # label=labels,
+#             # linecolor=colors,
+#             # legend=:bottomleft,
+#             # xlabel="Energy (keV)",
+#             # ylabel="Flux (Arbitrary Units)"
+#             )
+
+
 
 # vertical plot
 plot!(
@@ -96,7 +100,7 @@ plot!(
     # ylims=(0,maximum(last(line_profiles*1.1))),
     lw=2*multiplier
     )
-
+display(hist)
 # saving image
-png(iron_line_plot, "iron_line_plot.png")
-display(iron_line_plot)
+# png(iron_line_plot, "iron_line_plot.png")
+# display(iron_line_plot)

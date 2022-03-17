@@ -186,4 +186,4 @@ function energy_histogram(;obs_angle=30.0, spin=0.998, size_multiplier=1, fov=6.
 
 end
 
-energy_histogram()
+# energy_histogram()

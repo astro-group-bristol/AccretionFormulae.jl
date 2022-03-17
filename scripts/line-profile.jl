@@ -75,4 +75,4 @@ function energy_histogram_ferg(;
 end
 
 
-energy_histogram_ferg()
+# energy_histogram_ferg()
