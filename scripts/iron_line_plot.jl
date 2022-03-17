@@ -49,11 +49,16 @@ for spin in spins
     energies, lineProfile = energy_histogram(
                                             spin=spin, 
                                             obs_angle=40.0, 
-                                            # size_multiplier=3, 
-                                            # fov=6.0, 
-                                            # tolerance=1e-9, 
-                                            # dtmax=50
+                                            size_multiplier=3, 
+                                            fov=6.0, 
+                                            tolerance=1e-9, 
+                                            dtmax=50
                                             )
+    scale = maximum(lineProfile)
+    @show(scale)
+    @show(lineProfile)
+    lineProfile = lineProfile ./ scale
+    @show(lineProfile)
     push!(energy_vals, energies)
     push!(line_profiles, lineProfile)
 end

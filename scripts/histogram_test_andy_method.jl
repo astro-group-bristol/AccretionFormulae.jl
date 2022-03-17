@@ -165,13 +165,14 @@ function energy_histogram(;obs_angle=30.0, spin=0.998, size_multiplier=1, fov=6.
     end
 
     # plot line profile
-    plot(
+    profile =plot(
         energies,
         lineProfile,
         label = string(obs_angle),
         xlabel = "Energy",
         ylabel = "Line flux (arbitrary units)",
     )
+    display(profile)
 
     # scale = maximum(filter(!isnan,lineProfile))
     # scale = floor(log(10, scale))
