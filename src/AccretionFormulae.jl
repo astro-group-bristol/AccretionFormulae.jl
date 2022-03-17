@@ -2,9 +2,9 @@ module AccretionFormulae
 
 import GeodesicBase
 import GeodesicBase: AbstractMetricParams
-import CarterBoyerLindquist: CarterMethodBL, Σ, Δ, A, rms, Σδr_δλ
+import CarterBoyerLindquist: CarterMethodBL, CarterGeodesicPoint, Σ, Δ, A, rms, Σδr_δλ
 
-using GeodesicRendering: ValueFunction
+using GeodesicRendering: PointFunction
 
 import StaticArrays: @SVector
 import Tullio: @tullio
