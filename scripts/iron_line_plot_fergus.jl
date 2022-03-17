@@ -102,5 +102,5 @@ plot!(
     )
 display(hist)
 # saving image
-# png(iron_line_plot, "iron_line_plot.png")
+png(hist, "hist_test.png")
 # display(iron_line_plot)
