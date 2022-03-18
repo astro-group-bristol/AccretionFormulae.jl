@@ -55,4 +55,4 @@ function combined_plot(;
     combined_plot = plot(titleplot, hmap, profile, layout=l, size=(1000,500))
 end
 
-combined_plot()
+# combined_plot()
