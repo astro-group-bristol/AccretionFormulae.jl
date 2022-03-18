@@ -34,7 +34,7 @@ function temperature_render(;
     η = 0.1,
     η_phys = 0.1,
     edd_ratio = 0.1,
-    edd_ratio_phys = 0.1,
+    edd_ratio_phys = 0.1
 )
 
     m = CarterMethodBL(M = 1.0, a = spin)
@@ -109,14 +109,15 @@ function temperature_render(;
     new_img = reverse(temperature_img, dims = 1)
     new_img ./= scale
 
-    heatmap(
+    hmap = heatmap(
         new_img,
         aspect_ratio = 1.0,
         size = (resolution * 3 / 2, resolution),
         clim = (0, 3),
     )
     # contour(new_img, aspect_ratio=1.0, size=(resolution*3/2, resolution), clim=(0,3))
-    title!("Temperature Scale = $scalestr, Mass = $mass M_☼")
+    title!("Temperature Scale = $scalestr, Mass = $mass M_☼, Obs Angle = $obs_angle")
+    return hmap, cache
 end
 
-temperature_render(obs_angle = 85.0, mass = 1)
+# temperature_render(obs_angle = 85.0, mass = 1)
