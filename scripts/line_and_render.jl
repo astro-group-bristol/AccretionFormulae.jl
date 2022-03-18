@@ -10,11 +10,11 @@ function combined_plot(;
                         disc_angle = 90.0,
                         tolerance = 1e-8,
                         dtmax = 1000.0,
-                        size_multiplier::Int64 = 4,
+                        size_multiplier::Int64 = 5,
                         resolution = 400,
                         fov = 10
                         )
-    hmap, cache = temperature_render(
+    hmap, cache, title = temperature_render(
                                     mass = mass,
                                     spin = spin,
                                     obs_angle = obs_angle,
@@ -26,9 +26,33 @@ function combined_plot(;
                                     fov = fov
                                     )
     energy, line_flux = energy_histogram_cache(cache)
-    profile = histogram(energy, weights=line_flux, size=(400,200))
+    profile = histogram(
+                        energy, 
+                        weights=line_flux, 
+                        size=(400,200),
+                        xlim=(3,10),
+                        ylim=(0,100),
+                        legend=false)
 
-    l = @layout[a{0.6w} b{0.4w}]
+    verticle_line_x = fill(6.4, 100)
+    verticle_line_y = LinRange(0, 100, 100)
+    plot!(
+        verticle_line_x, 
+        verticle_line_y, 
+        linestyle=:dash, 
+        linecolor=:black, 
+        label=false, 
+        # xlims=(4,7.5), 
+        # ylims=(0,maximum(last(line_profiles*1.1))),
+        lw=2*multiplier
+    )
 
-    combined_plot = plot(hmap, profile, layout=l, size=(1000,500))
+    # combined plot
+    # subplot just for title
+    titleplot = plot(title=title, grid = false, showaxis = false, bottom_margin = -50Plots.px, ticks=false)
+
+    l = @layout[A{0.01h}; B{0.6w} C{0.4w}]
+    combined_plot = plot(titleplot, hmap, profile, layout=l, size=(1000,500))
 end
+
+combined_plot()

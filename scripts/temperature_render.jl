@@ -116,8 +116,10 @@ function temperature_render(;
         clim = (0, 3),
     )
     # contour(new_img, aspect_ratio=1.0, size=(resolution*3/2, resolution), clim=(0,3))
-    title!("Temperature Scale = $scalestr, Mass = $mass M_☼, Obs Angle = $obs_angle")
-    return hmap, cache
+    # title!("Temperature Scale = $scalestr, Mass = $mass M_☼, Obs Angle = $obs_angle")
+    title = "Temperature Scale = $scalestr, Mass = $mass M_☼, Obs Angle = $obs_angle"
+    return hmap, cache, title
 end
 
-# temperature_render(obs_angle = 85.0, mass = 1)
+# hmap, cache, title = temperature_render(obs_angle = 85.0, mass = 1)
+# display(hmap)
