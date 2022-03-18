@@ -44,7 +44,7 @@ function combined_plot(;
         label=false, 
         # xlims=(4,7.5), 
         # ylims=(0,maximum(last(line_profiles*1.1))),
-        lw=2*multiplier
+        lw=2
     )
 
     # combined plot
