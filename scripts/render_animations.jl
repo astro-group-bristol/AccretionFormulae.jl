@@ -4,7 +4,7 @@ include("line_and_render.jl")
 # choosing the range to animate over
 # vars = 75.0:1.0:85.0 # changing angle small
 # vars = [-179.0:1.0:-1.0;1.0:1.0:179.0] # changing angle full
-vars = 5:5:90
+vars = 5:10:85
 # vars = 1.0:5.0:200 # changing mass
 # vars = 0:0.1:0.998 # changing spin
 
@@ -32,4 +32,4 @@ anim = @animate for (i, var) in enumerate(vars)
 end
 
 # saving animation
-gif(anim, "gif.gif", fps=20)
+gif(anim, "gif.gif", fps=5)

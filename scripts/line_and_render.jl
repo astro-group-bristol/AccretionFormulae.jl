@@ -3,7 +3,7 @@ include("line_profile_cached.jl")
 using Measures
 gr()
 
-function combined_plot(
+function combined_plot(;
                         mass = 1,
                         spin = 0.998,
                         obs_angle = 85.0,
@@ -32,6 +32,3 @@ function combined_plot(
 
     combined_plot = plot(hmap, profile, layout=l, size=(1000,500))
 end
-
-
-combined_plot()
