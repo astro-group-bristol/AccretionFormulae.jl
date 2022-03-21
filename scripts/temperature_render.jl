@@ -106,6 +106,7 @@ function temperature_render(;
     # scaling image
     scale = 1e7
     scalestr = @sprintf "%.E" scale
+    exponent =  Int32(floor(log(10, scale)))
     new_img = reverse(temperature_img, dims = 1)
     new_img ./= scale
 
@@ -117,9 +118,21 @@ function temperature_render(;
     )
     # contour(new_img, aspect_ratio=1.0, size=(resolution*3/2, resolution), clim=(0,3))
     # title!("Temperature Scale = $scalestr, Mass = $mass M_☼, Obs Angle = $obs_angle")
-    title = "Temperature Scale = $scalestr, Mass = $mass M_☼, Obs Angle = $obs_angle"
+    # title = "Temperature Scale = $scalestr K, Mass = $mass M_☼, Obs Angle = $obs_angle"
+    title = "Temperature Scale = \$10^{$exponent}\$ K, Mass = $mass \$\\mathrm{M}_{\\odot}\$, Obs Angle = $obs_angle\$^{\\circ}\$"
+    # "")
     return hmap, cache, title
 end
 
-# hmap, cache, title = temperature_render(obs_angle = 85.0, mass = 1)
-# display(hmap)
+hmap, cache, title = temperature_render(obs_angle = 62.5, mass = 10, resolution=1080)
+# hmap, cache, title = temperature_render(
+#                                         mass=10,
+#                                         spin=0.998,
+#                                         obs_angle=62.5,
+#                                         tolerance=1e-12,
+#                                         size_multiplier=6,
+#                                         fov=10,
+#                                         dtmax=20
+#                                         )
+title!(title)
+display(hmap)
