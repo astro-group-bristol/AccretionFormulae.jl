@@ -58,7 +58,7 @@ function temperature_render(;
         abstol = tolerance,
         reltol = tolerance,
         image_width = 350 * size_multiplier,
-        image_height = 250 * size_multiplier,
+        image_height = 350 * size_multiplier,
         dtmax = dtmax,
     )
 
@@ -124,15 +124,15 @@ function temperature_render(;
     return hmap, cache, title
 end
 
-hmap, cache, title = temperature_render(obs_angle = 62.5, mass = 10, resolution=1080)
-# hmap, cache, title = temperature_render(
-#                                         mass=10,
-#                                         spin=0.998,
-#                                         obs_angle=62.5,
-#                                         tolerance=1e-12,
-#                                         size_multiplier=6,
-#                                         fov=10,
-#                                         dtmax=20
-#                                         )
-title!(title)
-display(hmap)
+# hmap, cache, title = temperature_render(obs_angle = 62.5, mass = 10, resolution=1080)
+# # hmap, cache, title = temperature_render(
+# #                                         mass=10,
+# #                                         spin=0.998,
+# #                                         obs_angle=62.5,
+# #                                         tolerance=1e-12,
+# #                                         size_multiplier=6,
+# #                                         fov=10,
+# #                                         dtmax=20
+# #                                         )
+# title!(title)
+# display(hmap)
