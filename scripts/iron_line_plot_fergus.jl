@@ -1,5 +1,5 @@
 # imports
-include("line-profile.jl")
+include("line-profile-modified.jl")
 using Measures
 
 # initialising plot backend
@@ -62,7 +62,9 @@ for var in vars
     # lineProfile = lineProfile ./ scale
     push!(energy_vals, energies)
     push!(line_profiles, lineProfile)
-    histogram!(energies, weights=lineProfile, label="OA = $var")
+    histogram!(energies, 
+    # weights=lineProfile,
+     label="OA = $var")
 end
 
 # legend labels, colours and styles

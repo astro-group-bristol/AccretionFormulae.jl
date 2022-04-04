@@ -94,3 +94,10 @@ function iron_line_profile(;
 
     return plt, hmap, title, cache
 end
+
+# plt, hmap, title, cache = iron_line_profile(tolerance=1e-12,
+#                                             size_multiplier=3,
+#                                             fov=12,
+#                                             dtmax=5,
+#                                             obs_angle=30)
+# display(plt)

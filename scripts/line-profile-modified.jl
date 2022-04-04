@@ -10,13 +10,19 @@ using StaticArrays
 using Plots
 gr()
 
+
+M_phys = 10*1.99e30
+m_dot = AccretionFormulae.mdot(M_phys)
+
 function flux(m, gp, max_time)
     g = AccretionFormulae.redshift(m, gp, max_time)
     r = gp.u[2]
-    g^4 / r^3
+    # # g^4 / r^3
+    AccretionFormulae.diss(m_dot, r, m.M, m.a)*g^4
 end
 
 function energy_histogram_ferg(;
+                            mass=10,
                             obs_angle=40,
                             spin=0.998,
                             fov=9.0,
@@ -30,6 +36,10 @@ function energy_histogram_ferg(;
     d = GeometricThinDisc(risco, 50.0, deg2rad(90))
 
     u = @SVector [0.0, 1000.0, deg2rad(obs_angle), 0.0]
+
+    
+    # M_phys = mass*1.99e30
+    # m_dot = AccretionFormulae.mdot(M_phys)
 
     cache = @time prerendergeodesics(
         m,

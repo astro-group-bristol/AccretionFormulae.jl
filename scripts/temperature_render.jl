@@ -125,14 +125,14 @@ function temperature_render(;
 end
 
 # hmap, cache, title = temperature_render(obs_angle = 62.5, mass = 10, resolution=1080)
-hmap, cache, title = temperature_render(
-                                        mass=10,
-                                        spin=0.998,
-                                        obs_angle=0.01,
-                                        tolerance=1e-12,
-                                        size_multiplier=6,
-                                        dtmax=1,
-                                        resolution=2000
-                                        )
-title!(title)
-display(hmap)
+# # hmap, cache, title = temperature_render(
+# #                                         mass=10,
+# #                                         spin=0.998,
+# #                                         obs_angle=0.01,
+# #                                         tolerance=1e-12,
+# #                                         size_multiplier=6,
+# #                                         dtmax=1,
+# #                                         resolution=2000
+# #                                         )
+# title!(title)
+# display(hmap)
