@@ -1,5 +1,6 @@
-include("temperature_render.jl")
-include("new_line_profile.jl")
+include("..\\temperature_render.jl")
+include("..\\iron_line_profile.jl")
+include("..\\colourbar.jl")
 using Measures
 gr()
 
@@ -38,12 +39,19 @@ function combined_plot(;
         lw=2
     )
 
+    hmap = plot(hmap, grid=false, 
+    ticks=false,
+    cbar=false,
+    foreground_color_subplot=colorant"white"
+    )
+    plt = plot(plt, grid=false, legend=false, bottom_margin=5mm, framestyle=:box)
+    cbar = colourbar()
     # combined plot
     # subplot just for title
     titleplot = plot(title=title, grid = false, showaxis = false, bottom_margin = -50Plots.px, ticks=false)
 
-    l = @layout[A{0.1h}; B{0.6w} C{0.4w}]
-    combined_plot = plot(titleplot, hmap, plt, layout=l, size=(1000,500))
+    l = @layout[A{0.1h}; [B{};C{0.05h} ] D{0.4w} ]
+    combined_plot = plot(titleplot, hmap, cbar, plt, layout=l, size=(1000,500))
 end
 
 comb = combined_plot(
