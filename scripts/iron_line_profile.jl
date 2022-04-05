@@ -88,16 +88,16 @@ function iron_line_profile(;
 
     # normalising to peak at 1
     bins ./= maximum(bins)
-    plt = plot(x_vals, bins, xlims=(e_min, e_max))
+    plt = plot(x_vals, bins, xlims=(e_min, e_max), grid=false, framestyle=:box)
     xaxis!("Energy (keV)")
     yaxis!("Flux (Arbitrary Units)")
 
     return plt, hmap, title, cache
 end
 
-# plt, hmap, title, cache = iron_line_profile(tolerance=1e-12,
-#                                             size_multiplier=3,
-#                                             fov=12,
-#                                             dtmax=5,
-#                                             obs_angle=30)
-# display(plt)
+plt, hmap, title, cache = iron_line_profile(tolerance=1e-12,
+                                            size_multiplier=3,
+                                            fov=12,
+                                            dtmax=5,
+                                            obs_angle=30)
+display(plt)

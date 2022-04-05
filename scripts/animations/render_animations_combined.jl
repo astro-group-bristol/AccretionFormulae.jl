@@ -1,5 +1,5 @@
-include("temperature_render.jl")
-include("new_line_and_render.jl")
+include("..\\temperature_render.jl")
+include("..\\good_plots\\line_and_render.jl")
 
 # choosing the range to animate over
 # vars = 75.0:1.0:85.0 # changing angle small

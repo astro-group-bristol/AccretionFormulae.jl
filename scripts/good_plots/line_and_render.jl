@@ -26,7 +26,7 @@ function combined_plot(;
                                     )
 
     verticle_line_x = fill(6.4, 100)
-    verticle_line_y = LinRange(0, 1, 100)
+    verticle_line_y = LinRange(0, 1.25, 100)
     plot!(
         plt,
         verticle_line_x, 
@@ -44,7 +44,7 @@ function combined_plot(;
     cbar=false,
     foreground_color_subplot=colorant"white"
     )
-    plt = plot(plt, grid=false, legend=false, bottom_margin=5mm, framestyle=:box)
+    plt = plot(plt, grid=false, legend=false, bottom_margin=5mm, framestyle=:box, ylims=(0,1.25))
     cbar = colourbar()
     # combined plot
     # subplot just for title
