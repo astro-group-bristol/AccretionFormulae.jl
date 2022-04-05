@@ -72,5 +72,5 @@ plot!(
     )
 
 # saving image
-png(plt, "iron_line_plot.png")
+png(plt, "iron_line_plot_spin.png")
 display(plt)
