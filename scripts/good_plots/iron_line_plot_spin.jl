@@ -24,7 +24,7 @@ vars = [0.0,0.25,0.50,0.75,0.998] # spins
 # vars = [10, 30, 60, 75]
 
 # legend labels, colours and styles
-labels = permutedims(label.(vars, "OA","\$^{\\circ}\$"))
+labels = permutedims(label.(vars, "Spin",""))
 styles = [:solid :dash :dot :dashdot :dashdotdot]
 colors = [:black :blue :red :green :purple]
 

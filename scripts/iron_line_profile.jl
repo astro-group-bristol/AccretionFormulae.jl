@@ -99,6 +99,7 @@ function iron_line_profile(;
         return x_vals, bins
     end
 end
+
 # plt, hmap, title, cache = iron_line_profile(tolerance=1e-12,
 #                                             # size_multiplier=3,
 #                                             # fov=12,
