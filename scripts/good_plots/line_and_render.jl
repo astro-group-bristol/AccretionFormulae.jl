@@ -54,13 +54,13 @@ function combined_plot(;
     combined_plot = plot(titleplot, hmap, cbar, plt, layout=l, size=(1000,500))
 end
 
-comb = combined_plot(
-                mass=10,
-                spin=0.998,
-                obs_angle=15.0,
-                tolerance=1e-12,
-                size_multiplier=1,
-                fov=10,
-                dtmax=20
-)
-display(comb)
+# comb = combined_plot(
+#                 mass=10,
+#                 spin=0.998,
+#                 obs_angle=15.0,
+#                 tolerance=1e-12,
+#                 size_multiplier=1,
+#                 fov=10,
+#                 dtmax=20
+# )
+# display(comb)

@@ -46,7 +46,8 @@ function iron_line_profile(;
                             dtmax = 1000.0,
                             size_multiplier::Int64 = 1,
                             resolution = 400,
-                            fov = 3.0
+                            fov = 3.0,
+                            output = "plot"
                             )
     hmap, cache, title = temperature_render(;
                                             mass = mass,
@@ -92,12 +93,15 @@ function iron_line_profile(;
     xaxis!("Energy (keV)")
     yaxis!("Flux (Arbitrary Units)")
 
-    return plt, hmap, title, cache
+    if output == "plot"
+        return plt, hmap, title, cache
+    elseif output == "data"
+        return x_vals, bins
+    end
 end
-
-plt, hmap, title, cache = iron_line_profile(tolerance=1e-12,
-                                            size_multiplier=3,
-                                            fov=12,
-                                            dtmax=5,
-                                            obs_angle=30)
-display(plt)
+# plt, hmap, title, cache = iron_line_profile(tolerance=1e-12,
+#                                             # size_multiplier=3,
+#                                             # fov=12,
+#                                             # dtmax=5,
+#                                             obs_angle=30)
+# display(plt)
