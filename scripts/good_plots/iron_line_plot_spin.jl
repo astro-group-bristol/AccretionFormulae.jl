@@ -30,26 +30,32 @@ colors = [:black :blue :red :green :purple]
 
 # values to be plotted
 bins_vals = []
+x_vals_vals = []
 
 # generating data for different spins
 for var in vars
     fvar = Float64(var)
-    x_vals, bins = iron_line_profile(tolerance=1e-12,
-                                            size_multiplier=3,
-                                            fov=12,
-                                            dtmax=5,
-                                            spin=fvar,
-                                            output="data")
+    x_vals, bins = iron_line_profile(
+                                    tolerance=1e-12,
+                                    size_multiplier=3,
+                                    fov=12,
+                                    dtmax=5,
+                                    spin=fvar,
+                                    output="data",
+                                    normalised=false,
+                                    obs_angle=40
+                                    )
+    push!(x_vals_vals, x_vals)
     push!(bins_vals, bins)
 end
 
 # adding a line to represent the lab frame 6.4 keV emission line
 verticle_line_x = fill(6.4, 100)
-verticle_line_y = LinRange(0, 1.2, 100)
+verticle_line_y = LinRange(0, 1.37e55, 100)
 
 # plotting
 plt = plot(
-        x_vals,
+        x_vals_vals[1],
         bins_vals,
         framestyle=:box,
         grid=false,
@@ -61,15 +67,15 @@ plt = plot(
         legend=:topleft
         )
 # vertical plot
-plot!(
-    verticle_line_x, 
-    verticle_line_y, 
-    linestyle=:dash, 
-    linecolor=:black, 
-    label=false,
-    ylims=(0,1.2),
-    lw=2
-    )
+# plot!(
+#     verticle_line_x, 
+#     verticle_line_y, 
+#     linestyle=:dash, 
+#     linecolor=:black, 
+#     label=false,
+#     ylims=(0,1.37e55),
+#     lw=2
+#     )
 
 # saving image
 png(plt, "iron_line_plot_spin.png")

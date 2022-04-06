@@ -47,7 +47,8 @@ function iron_line_profile(;
                             size_multiplier::Int64 = 1,
                             resolution = 400,
                             fov = 3.0,
-                            output = "plot"
+                            output = "plot",
+                            normalised = true
                             )
     hmap, cache, title = temperature_render(;
                                             mass = mass,
@@ -88,7 +89,10 @@ function iron_line_profile(;
     end
 
     # normalising to peak at 1
-    bins ./= maximum(bins)
+    if normalised
+        bins ./= maximum(bins)
+        print("Hello")
+    end
     plt = plot(x_vals, bins, xlims=(e_min, e_max), grid=false, framestyle=:box)
     xaxis!("Energy (keV)")
     yaxis!("Flux (Arbitrary Units)")
