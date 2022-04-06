@@ -7,8 +7,8 @@ using AccretionFormulae
 using Dates
 gr()
 
-init_radii = 10:1.0:100
-vϕ_vals = 3.00:0.01:10.00
+init_radii = 10:0.1:20
+vϕ_vals = 1.00:0.01:10.00
 total = length(init_radii)*length(vϕ_vals) # total number of combinations
 found = 0   # number of combinations found
 
@@ -29,14 +29,14 @@ for init_radius in init_radii
     sols = tracegeodesics(
         m, 
         us, vs, 
-        (0.0, 300.0), 
+        (0.0, 8.0*init_radius^(3/2)), 
         μ=1.0;
         abstol=1e-8,
         reltol=1e-8,
         verbose=true
     )
     # @show(typeof(sols))
-    for (i, sol) in enumerate(sols)
+    for (j, sol) in enumerate(sols)
         # selecting only radius values, and only looking at the end
         new_sols = copy(selectdim(sol, 1, 6))
         min, max =  extrema(new_sols)
@@ -47,7 +47,7 @@ for init_radius in init_radii
         if (diff <= 1) & (min > R_isco*1.1)
             found +=1
             plt = plot(sol, vars=(8, 6), projection=:polar, range=(0, 21), legend=false)
-            title!("Initial Radius=$init_radius, vϕ=$(vϕ_vals[i])")
+            title!("Initial Radius=$init_radius, vϕ=$(vϕ_vals[j])")
             display(plt)
         end
     end
