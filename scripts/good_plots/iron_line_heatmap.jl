@@ -1,10 +1,11 @@
 # imports
 include("../iron_line_profile.jl")
 using Measures
+using DelimitedFiles
 gr()
 
 nbins=600
-vars = LinRange(5.0, 85.0, 100)
+vars = LinRange(5.0, 85.0, 400)
 # vars = 5.0:5.0:85.0
 
 # values to be plotted
@@ -26,9 +27,9 @@ for var in vars
     fvar = Float64(var)
     x_vals, bins = iron_line_profile(
                                     tolerance=1e-12,
-                                    size_multiplier=3,
+                                    size_multiplier=8,
                                     fov=12,
-                                    dtmax=5,
+                                    dtmax=2,
                                     obs_angle=fvar,
                                     output="data",
                                     normalised=true,
@@ -47,6 +48,6 @@ hmp = heatmap(
             xlabel="Energy (keV)",
             ylabel="Observation Angle"
             )
+writedlm("heatmap_data.txt", new)
 display(hmp)
-
-contour(new)
+png(hmp, "iron_heatmap.png")
