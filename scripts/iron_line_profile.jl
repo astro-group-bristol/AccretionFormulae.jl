@@ -48,7 +48,8 @@ function iron_line_profile(;
                             resolution = 400,
                             fov = 3.0,
                             output = "plot",
-                            normalised = true
+                            normalised = true,
+                            nbins = 100
                             )
     hmap, cache, title = temperature_render(;
                                             mass = mass,
@@ -75,7 +76,7 @@ function iron_line_profile(;
     # parameters
     e_min = 0
     e_max = 10
-    n_bins = 100
+    n_bins = nbins
 
     bins = zeros(n_bins)
     x_vals = LinRange(0, e_max, n_bins)
@@ -91,7 +92,6 @@ function iron_line_profile(;
     # normalising to peak at 1
     if normalised
         bins ./= maximum(bins)
-        print("Hello")
     end
     plt = plot(x_vals, bins, xlims=(e_min, e_max), grid=false, framestyle=:box)
     xaxis!("Energy (keV)")
