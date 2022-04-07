@@ -11,6 +11,8 @@ init_radii = 10:0.1:20
 vϕ_vals = 1.00:0.01:10.00
 total = length(init_radii)*length(vϕ_vals) # total number of combinations
 found = 0   # number of combinations found
+r_vals=[]
+v_vals=[]
 
 start = now() # timing start
 for init_radius in init_radii
@@ -35,6 +37,7 @@ for init_radius in init_radii
         reltol=1e-8,
         verbose=true
     )
+
     # @show(typeof(sols))
     for (j, sol) in enumerate(sols)
         # selecting only radius values, and only looking at the end
@@ -49,6 +52,8 @@ for init_radius in init_radii
             plt = plot(sol, vars=(8, 6), projection=:polar, range=(0, 21), legend=false)
             title!("Initial Radius=$init_radius, vϕ=$(vϕ_vals[j])")
             display(plt)
+            push!(r_vals, init_radius)
+            push!(v_vals, vϕ_vals[j])
         end
     end
 end
@@ -56,3 +61,6 @@ duration = now() - start # timing finish
 println("Done")
 println("Found $found solutions in $duration.")
 println("Success rate of $(found/total) .")
+
+# r_vals, v_vals = collect(zip(stable_orbits))
+plot(r_vals, v_vals, xlabel="Initial Radius", ylabel="vϕ")
