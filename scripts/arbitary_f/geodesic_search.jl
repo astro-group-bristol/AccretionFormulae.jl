@@ -46,7 +46,7 @@ function search(;
         # still have to brute force search this bit
         # or use some analytic result from a paper
         # vs = [@SVector [0.0, 0.0, 0.0, -vϕ/100] for vϕ in 3.96:0.01:3.97]
-        vs = [@SVector [0.0, 0.0, 0.0, -vϕ/100] for vϕ in vϕ_vals]
+        vs = [@SVector [0.0, 0.0, 0.0, vϕ/100] for vϕ in vϕ_vals]
         us = [u for _ in 1:length(vs)]
 
         sols = tracegeodesics(
