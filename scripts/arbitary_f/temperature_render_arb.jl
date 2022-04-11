@@ -4,6 +4,7 @@ using CarterBoyerLindquist
 using AccretionFormulae
 using StaticArrays
 using Printf
+include("emission_profile_arbitrary.jl")
 
 using Plots
 gr()
@@ -13,7 +14,7 @@ function temperature(m, gp, max_time; kwargs...)
 
     M = m.M
     a_star = m.a
-    temperature = AccretionFormulae.observed_temperature(gp.u[2], a_star, M, g)
+    temperature = observed_temperature_arb(gp.u[2], M, g)
 
 end
 
@@ -114,7 +115,7 @@ function temperature_render(;
         new_img,
         aspect_ratio = 1.0,
         size = (resolution * 3 / 2, resolution),
-        clim = (0, 3),
+        # clim = (0, 3),
     )
     # contour(new_img, aspect_ratio=1.0, size=(resolution*3/2, resolution), clim=(0,3))
     # title!("Temperature Scale = $scalestr, Mass = $mass M_☼, Obs Angle = $obs_angle")
@@ -124,7 +125,7 @@ function temperature_render(;
     return hmap, cache, title
 end
 
-hmap, cache, title = temperature_render(obs_angle = 62.5, mass = 10, resolution=1080)
+hmap, cache, title = temperature_render(obs_angle = 85.0, mass = 10, resolution=1080)
 # # hmap, cache, title = temperature_render(
 # #                                         mass=10,
 # #                                         spin=0.998,
@@ -134,5 +135,5 @@ hmap, cache, title = temperature_render(obs_angle = 62.5, mass = 10, resolution=
 # #                                         dtmax=1,
 # #                                         resolution=2000
 # #                                         )
-# title!(title)
+title!(title)
 display(hmap)

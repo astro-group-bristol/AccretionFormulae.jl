@@ -33,25 +33,22 @@ end
 
 function diss(mdot, r)
     index = findall(x->x==r, r_vals)
-    diss = ((c^6) / (G^2)) * mdot * f_vals[index] / (4 * π * r)
+    diss = ((c^6) / (G^2)) * mdot * f_vals[index] / (4 * π)
+    @show(diss)
 end
 
-function temperature(r, M)
+function temperature_arb(r, M)
     m_dot = mdot(M)
-    temperature = (diss(m_dot, r)[1] / σ_SB)^(1 / 4)
+    @show(diss(m_dot, r))
+    temperature_arb = (diss(m_dot, r)[1] / σ_SB)^(1 / 4)
 end
 
 """
 From Fanton et al. (1997) (Eq78)
 """
-function observed_temperature(r, g)
-    T = temperature(r, a_star, M)
-    observed_temperature = g * T
-end
-
-function mass_scale_fraction(M, η, edd_ratio, r_isco, r_g, r)
-    mass_scale_fraction =
-        ((M * η)^(-1) * (edd_ratio * (1 - √(r_isco / r))) * (r_g / r)^3)^(1 / 4)
+function observed_temperature_arb(r, M, g)
+    T = temperature_arb(r, M)
+    observed_temperature_arb = g * T
 end
 
 # constants
@@ -62,9 +59,9 @@ M_☼ = 1.99e30
 σ_SB = 5.67e-8
 η = 0.1
 
-export observed_temperature, r_isco, temperature, mass_scale_fraction
+export observed_temperature_arb, temperature_arb
 
-temperature_vals = temperature.(r_vals, 1.99e31)
+# temperature_vals = temperature_arb.(r_vals, 1)
 
-plt = plot(r_vals, temperature_vals)
-display(plt)
+# plt = plot(r_vals, temperature_vals)
+# display(plt)

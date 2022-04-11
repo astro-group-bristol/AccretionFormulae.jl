@@ -124,7 +124,7 @@ function temperature_render(;
     return hmap, cache, title
 end
 
-hmap, cache, title = temperature_render(obs_angle = 62.5, mass = 10, resolution=1080)
+# hmap, cache, title = temperature_render(obs_angle = 62.5, mass = 10, resolution=1080)
 # # hmap, cache, title = temperature_render(
 # #                                         mass=10,
 # #                                         spin=0.998,
@@ -135,4 +135,4 @@ hmap, cache, title = temperature_render(obs_angle = 62.5, mass = 10, resolution=
 # #                                         resolution=2000
 # #                                         )
 # title!(title)
-display(hmap)
+# display(hmap)

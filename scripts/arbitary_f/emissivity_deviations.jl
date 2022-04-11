@@ -20,17 +20,22 @@ function gsqrt(ϵ_3, r, a, M, α_13, α_22, α_52)
                 √(((1 + (ϵ_3 * M^3)/(r^3))^3)/
                 (1 + (α_52 * M^2)/(r^2)))
 end
-R_isco = AccretionFormulae.r_isco(0.998, 1)
+
 function f_arbitrary(;
-                    init_radii = R_isco+1:0.1:30,
+
+                    outer_radius = 30,
+                    radius_step = 0.1,
                     vϕ_vals = 0.00:0.001:10.00,
                     α_13 = 0,
                     α_22 = 0,
                     α_52 = 0,
                     ϵ_3 = 0,
-                    M = 1
+                    M = 1,
+                    a = 0.998
                     )
 
+    R_isco = AccretionFormulae.r_isco(a, M)
+    init_radii = R_isco+1:radius_step:outer_radius
 
     # getting solutions from the search
     r_vals_long, _, r_dict_vϕ, r_dict_Lz, r_dict_En = search(
@@ -81,7 +86,7 @@ function f_arbitrary(;
         En = En_vals[i]
         Lz = Lz_vals[i]
         vϕ = vϕ_vals[i]
-        g_factor = gsqrt(ϵ_3, init_radius, 0.998, M, α_13, α_22, α_52)
+        g_factor = gsqrt(ϵ_3, init_radius, a, M, α_13, α_22, α_52)
         # M = 1
         dΩdr = only(Interpolations.gradient(itp_vϕ, init_radius))
         dLzdr = only(Interpolations.gradient(itp_Lz, init_radius))
