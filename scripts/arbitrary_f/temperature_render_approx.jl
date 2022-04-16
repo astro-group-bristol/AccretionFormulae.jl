@@ -4,27 +4,19 @@ using CarterBoyerLindquist
 using AccretionFormulae
 using StaticArrays
 using Printf
-include("emission_profile_arbitrary.jl")
+include("alt-emissivity-deviations.jl")
 
 using Plots
 gr()
-
-function temperature(m, gp, max_time; kwargs...)
-    g = AccretionFormulae.redshift(m, gp, max_time; kwargs...)
-
-    M = m.M
-    a_star = m.a
-    temperature = observed_temperature_arb(gp.u[2], M, g)
-
-end
 
 function radius(m, gp, max_time; kwargs...)
     gp.u[2]
 end
 
-function temperature_render(;
+function temperature_render_approx(;
     mass = 1,
-    spin = 0.998,
+    spin = 0.97,
+    disc_radius=50.0,
     obs_angle = 85.0,
     disc_angle = 90.0,
     tolerance = 1e-8,
@@ -35,18 +27,34 @@ function temperature_render(;
     η = 0.1,
     η_phys = 0.1,
     edd_ratio = 0.1,
-    edd_ratio_phys = 0.1
+    edd_ratio_phys = 0.1,
+    ϵ_3=0, 
+    α_13=0, 
+    α_22=0,
+    α_52=0
 )
-
+    println("Approximating f")
+    fs, r_range = init(;a=spin, M=1.0, disc_radius=disc_radius, ϵ_3=ϵ_3, α_13=α_13, α_22=α_22, α_52=α_52)
+    println("Approximation Finished")
     m = CarterMethodBL(M = 1.0, a = spin)
     M = m.M
+
+    function temperature(m, gp, max_time; kwargs...)
+        g = AccretionFormulae.redshift(m, gp, max_time; kwargs...)
+    
+        M = m.M
+        a_star = m.a
+        temperature = observed_temperature_approx(gp.u[2], a_star, M, g, fs, r_range
+         )
+    
+    end
 
     # observer position
     u = [0.0, 1000.0, deg2rad(obs_angle), 0.0]
     R_isco = AccretionFormulae.r_isco(m.a, m.M)
 
     # disc
-    d = GeometricThinDisc(R_isco + 1, 50.0, deg2rad(disc_angle))
+    d = GeometricThinDisc(R_isco + 1, disc_radius, deg2rad(disc_angle))
 
 
     # cache the render
@@ -115,7 +123,7 @@ function temperature_render(;
         new_img,
         aspect_ratio = 1.0,
         size = (resolution * 3 / 2, resolution),
-        # clim = (0, 3),
+        clim = (0, 3),
     )
     # contour(new_img, aspect_ratio=1.0, size=(resolution*3/2, resolution), clim=(0,3))
     # title!("Temperature Scale = $scalestr, Mass = $mass M_☼, Obs Angle = $obs_angle")
@@ -125,7 +133,7 @@ function temperature_render(;
     return hmap, cache, title
 end
 
-hmap, cache, title = temperature_render(obs_angle = 85.0, mass = 10, resolution=1080)
+# hmap, cache, title = temperature_render_approx(obs_angle = 85, mass = 10, resolution=1080, spin=0.97, ϵ_3=10)
 # # hmap, cache, title = temperature_render(
 # #                                         mass=10,
 # #                                         spin=0.998,
@@ -135,5 +143,5 @@ hmap, cache, title = temperature_render(obs_angle = 85.0, mass = 10, resolution=
 # #                                         dtmax=1,
 # #                                         resolution=2000
 # #                                         )
-title!(title)
-display(hmap)
+# title!(title)
+# display(hmap)

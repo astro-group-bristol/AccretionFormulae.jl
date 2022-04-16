@@ -34,11 +34,7 @@ function temperature_render(;
     η = 0.1,
     η_phys = 0.1,
     edd_ratio = 0.1,
-<<<<<<< HEAD
-    edd_ratio_phys = 0.1
-=======
     edd_ratio_phys = 0.1,
->>>>>>> 198f8b5b71f70b735ba4c6b827b1ecea6cc9c5c1
 )
 
     m = CarterMethodBL(M = 1.0, a = spin)
@@ -62,11 +58,7 @@ function temperature_render(;
         abstol = tolerance,
         reltol = tolerance,
         image_width = 350 * size_multiplier,
-<<<<<<< HEAD
         image_height = 350 * size_multiplier,
-=======
-        image_height = 250 * size_multiplier,
->>>>>>> 198f8b5b71f70b735ba4c6b827b1ecea6cc9c5c1
         dtmax = dtmax,
     )
 
@@ -114,18 +106,11 @@ function temperature_render(;
     # scaling image
     scale = 1e7
     scalestr = @sprintf "%.E" scale
-<<<<<<< HEAD
     exponent =  Int32(floor(log(10, scale)))
     new_img = reverse(temperature_img, dims = 1)
     new_img ./= scale
 
     hmap = heatmap(
-=======
-    new_img = reverse(temperature_img, dims = 1)
-    new_img ./= scale
-
-    heatmap(
->>>>>>> 198f8b5b71f70b735ba4c6b827b1ecea6cc9c5c1
         new_img,
         aspect_ratio = 1.0,
         size = (resolution * 3 / 2, resolution),
@@ -139,7 +124,6 @@ function temperature_render(;
     return hmap, cache, title
 end
 
-<<<<<<< HEAD
 # hmap, cache, title = temperature_render(obs_angle = 62.5, mass = 10, resolution=1080)
 # # hmap, cache, title = temperature_render(
 # #                                         mass=10,
@@ -152,6 +136,3 @@ end
 # #                                         )
 # title!(title)
 # display(hmap)
-=======
-temperature_render(obs_angle = 85.0, mass = 1)
->>>>>>> 198f8b5b71f70b735ba4c6b827b1ecea6cc9c5c1

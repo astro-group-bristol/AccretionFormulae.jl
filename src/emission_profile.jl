@@ -84,4 +84,4 @@ M_☼ = 1.99e30
 σ_SB = 5.67e-8
 η = 0.1
 
-export observed_temperature, r_isco, temperature, mass_scale_fraction
+export observed_temperature, r_isco, temperature, mass_scale_fraction, mdot
