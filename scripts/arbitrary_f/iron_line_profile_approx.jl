@@ -9,16 +9,6 @@ using Plots
 include("temperature_render_approx.jl")
 gr()
 
-function flux(m, gp, max_time)
-    g = AccretionFormulae.redshift(m, gp, max_time)
-    r = gp.u[2]
-    M = m.M
-    a_star = m.a
-    mdot = AccretionFormulae.mdot(M)
-    flux = g^4 * AccretionFormulae.diss(mdot, r, a_star, M)
-    return (flux, g)
-end
-
 """
 Calculating the index for each flux
 """
@@ -55,7 +45,13 @@ function iron_line_profile_approx(;
                             α_22=0,
                             α_52=0
                             )
-    hmap, cache, title = temperature_render_approx(;
+
+                            @show(ϵ_3)
+                            @show(α_13)
+                            @show(α_22)
+                            @show(α_52)
+
+    hmap, cache, title, fs, r_range = temperature_render_approx(;
                                             mass = mass,
                                             spin = spin,
                                             obs_angle = obs_angle,
@@ -69,6 +65,16 @@ function iron_line_profile_approx(;
                                             α_22=α_22,
                                             α_52=α_52
                                             )
+
+    function flux(m, gp, max_time)
+        g = AccretionFormulae.redshift(m, gp, max_time)
+        r = gp.u[2]
+        M = m.M
+        a_star = m.a
+        mdot = AccretionFormulae.mdot(M)
+        flux = g^4 * diss_approx(mdot, r, a_star, M, fs, r_range)
+        return (flux, g)
+    end
 
     # define a common filter 
     filter = ConstPointFunctions.filter_intersected
@@ -116,5 +122,6 @@ end
 #                                             # size_multiplier=3,
 #                                             # fov=12,
 #                                             # dtmax=5,
-#                                             obs_angle=30)
+#                                             obs_angle=30,
+#                                             ϵ_3=0)
 # display(plt)

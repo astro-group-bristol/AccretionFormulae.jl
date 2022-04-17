@@ -130,18 +130,22 @@ function temperature_render_approx(;
     # title = "Temperature Scale = $scalestr K, Mass = $mass M_☼, Obs Angle = $obs_angle"
     title = "Temperature Scale = \$10^{$exponent}\$ K, Mass = $mass \$\\mathrm{M}_{\\odot}\$, Obs Angle = $obs_angle\$^{\\circ}\$"
     # "")
-    return hmap, cache, title
+    return hmap, cache, title, fs, r_range
 end
 
-# hmap, cache, title = temperature_render_approx(obs_angle = 85, mass = 10, resolution=1080, spin=0.97, ϵ_3=10)
-# # hmap, cache, title = temperature_render(
-# #                                         mass=10,
-# #                                         spin=0.998,
-# #                                         obs_angle=0.01,
-# #                                         tolerance=1e-12,
-# #                                         size_multiplier=6,
-# #                                         dtmax=1,
-# #                                         resolution=2000
-# #                                         )
-# title!(title)
+# α_13_vals = LinRange(0,10,3)
+
+# for α_13 in α_13_vals
+# hmap, cache, title = temperature_render_approx(obs_angle = 85, mass = 10, resolution=1080, spin=0.97, α_22=α_13)
+# # # hmap, cache, title = temperature_render(
+# # #                                         mass=10,
+# # #                                         spin=0.998,
+# # #                                         obs_angle=0.01,
+# # #                                         tolerance=1e-12,
+# # #                                         size_multiplier=6,
+# # #                                         dtmax=1,
+# # #                                         resolution=2000
+# # #                                         )
+# # title!(title)
 # display(hmap)
+# end
