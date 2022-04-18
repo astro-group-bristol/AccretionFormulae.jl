@@ -20,7 +20,7 @@ bins_vals = []
 for var in vars
     x_vals_approx, bins_approx = iron_line_profile_approx(
                                                 tolerance=1e-12,
-                                                size_multiplier=10,
+                                                size_multiplier=3,
                                                 fov=12,
                                                 dtmax=2,
                                                 obs_angle=30,
@@ -46,13 +46,14 @@ bins_vals = []
 for var in vars
     x_vals_approx, bins_approx = iron_line_profile_approx(
                                                 tolerance=1e-12,
-                                                size_multiplier=10,
+                                                size_multiplier=3,
                                                 fov=12,
                                                 dtmax=2,
                                                 obs_angle=30,
                                                 output = "data",
                                                 α_22 = var ,
                                                 spin = 0.8 ,
+                                                normalised = false
                                                 )
     push!(bins_vals, bins_approx)
     push!(x_vals_vals, x_vals_approx)

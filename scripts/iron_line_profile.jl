@@ -51,7 +51,7 @@ function iron_line_profile(;
                             normalised = true,
                             nbins = 100
                             )
-    hmap, cache, title = temperature_render(;
+    hmap, cache, title, new_img = temperature_render(;
                                             mass = mass,
                                             spin = spin,
                                             obs_angle = obs_angle,
@@ -108,5 +108,6 @@ end
 #                                             # size_multiplier=3,
 #                                             # fov=12,
 #                                             # dtmax=5,
-#                                             obs_angle=30)
+#                                             obs_angle=30,
+#                                             image_size_multiplier=1.5)
 # display(plt)

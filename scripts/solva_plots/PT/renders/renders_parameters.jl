@@ -1,4 +1,4 @@
-include("../../temperature_render.jl")
+include("../../../temperature_render.jl")
 
 mass_vars = [10, 100, 10e6]
 spin_vars = [0.0, 0.5, 0.998]
@@ -19,7 +19,7 @@ for mass in mass_vars
                                                     resolution=3000
                                                     )
     title!(title)
-    png(hmap, "mass=$mass.png")
+    png(hmap, "render_mass=$mass.png")
 end
 
 for spin in spin_vars
@@ -33,7 +33,7 @@ for spin in spin_vars
                                                     resolution=3000
                                                     )
     title!(title)
-    png(hmap, "spin=$spin.png")
+    png(hmap, "render_spin=$spin.png")
 end
 
 for angle in angle_vars
@@ -47,5 +47,5 @@ for angle in angle_vars
                                                     resolution=3000
                                                     )
     title!(title)
-    png(hmap, "angle=$angle.png")
+    png(hmap, "render_angle=$angle.png")
 end

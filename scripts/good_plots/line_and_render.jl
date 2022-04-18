@@ -12,7 +12,8 @@ function combined_plot(;
                         dtmax = 1000.0,
                         size_multiplier::Int64 = 1,
                         resolution = 400,
-                        fov = 3.0
+                        fov = 3.0,                        
+                        nbins=200
                         )
     plt, hmap, title, cache = iron_line_profile(
                                     mass = mass,
@@ -22,7 +23,8 @@ function combined_plot(;
                                     dtmax = dtmax,
                                     size_multiplier = size_multiplier,
                                     resolution = resolution,
-                                    fov = fov
+                                    fov = fov,
+                                    nbins=nbins
                                     )
 
     verticle_line_x = fill(6.4, 100)
@@ -52,15 +54,16 @@ function combined_plot(;
 
     l = @layout[A{0.1h}; [B{};C{0.05h} ] D{0.4w} ]
     combined_plot = plot(titleplot, hmap, cbar, plt, layout=l, size=(1000,500))
+    return combined_plot
 end
 
-comb = combined_plot(
-                mass=10,
-                spin=0.998,
-                obs_angle=15.0,
-                tolerance=1e-12,
-                size_multiplier=1,
-                fov=10,
-                dtmax=20
-)
-display(comb)
+# comb = combined_plot(
+#                 mass=10,
+#                 spin=0.998,
+#                 obs_angle=15.0,
+#                 tolerance=1e-12,
+#                 size_multiplier=1,
+#                 fov=10,
+#                 dtmax=20
+# )
+# display(comb)
