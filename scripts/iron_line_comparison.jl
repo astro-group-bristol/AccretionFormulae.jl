@@ -26,7 +26,8 @@ for var in vars
                                                 obs_angle=30,
                                                 output = "data",
                                                 ϵ_3 = var ,
-                                                spin = 0.8 
+                                                spin = 0.8,
+                                                normalised = false
                                                 )
     push!(bins_vals, bins_approx)
     push!(x_vals_vals, x_vals_approx)
@@ -51,7 +52,7 @@ for var in vars
                                                 obs_angle=30,
                                                 output = "data",
                                                 α_22 = var ,
-                                                spin = 0.8 
+                                                spin = 0.8 ,
                                                 )
     push!(bins_vals, bins_approx)
     push!(x_vals_vals, x_vals_approx)

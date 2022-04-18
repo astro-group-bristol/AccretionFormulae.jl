@@ -121,7 +121,7 @@ function temperature_render(;
     # title = "Temperature Scale = $scalestr K, Mass = $mass M_☼, Obs Angle = $obs_angle"
     title = "Temperature Scale = \$10^{$exponent}\$ K, Mass = $mass \$\\mathrm{M}_{\\odot}\$, Obs Angle = $obs_angle\$^{\\circ}\$"
     # "")
-    return hmap, cache, title
+    return hmap, cache, title, new_img
 end
 
 # hmap, cache, title = temperature_render(obs_angle = 62.5, mass = 10, resolution=1080)
