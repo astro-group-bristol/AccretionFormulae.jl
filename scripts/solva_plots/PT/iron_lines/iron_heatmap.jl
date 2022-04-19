@@ -1,6 +1,6 @@
 include("../../../good_plots/iron_line_heatmap.jl")
 
-vars = LinRange(5.0, 85.0, 500)
+vars = 5.0:85.0
 
 hmp = iron_line_heatmap(tolerance=1e-12,
                         dtmax=5,

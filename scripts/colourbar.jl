@@ -9,7 +9,7 @@ function colourbar()
             xticks=(LinRange(0,1000,4),
             string.(0.0:1:3.0)), 
             yticks=false, 
-            size=(400,50), 
+            size=(600,100), 
             bottom_margin=5mm, 
             left_margin=5mm,
             right_margin=5mm,

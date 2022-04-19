@@ -115,6 +115,7 @@ function temperature_render(;
         aspect_ratio = 1.0,
         size = (resolution * 3 / 2, resolution),
         clim = (0, 3),
+        grid = false
     )
     # contour(new_img, aspect_ratio=1.0, size=(resolution*3/2, resolution), clim=(0,3))
     # title!("Temperature Scale = $scalestr, Mass = $mass M_☼, Obs Angle = $obs_angle")
