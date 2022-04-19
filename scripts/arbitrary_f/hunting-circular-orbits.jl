@@ -142,7 +142,7 @@ function test_single(; r_init = 10.0, a = 0.0, upper = 0.1)
     plot!(sol, vars = (8, 6), projection = :polar, range = (0.0, r_init), legend = false)
 end
 
-
+test_single()
 
 # pl = plot()
 
