@@ -22,9 +22,6 @@ for r in r_range
     push!(f_vals_approx, f_approx_func(r, fs, r_range, a=a, M=M))
     push!(f_vals_approx_epsneg, f_approx_func(r, fs_epsneg, r_range_epsneg, a=a, M=M))
     push!(f_vals_approx_epspos, f_approx_func(r, fs_epspos, r_range_epspos, a=a, M=M))
-#     f_vals_approx = temperature_approx.(r_vals, a, M, fs, r_range)
-#     f_vals_approx_epsneg = temperature_approx.(r_vals, a, M, fs_epsneg, r_range_epsneg)
-#     f_vals_approx_epspos = temperature_approx.(r_vals, a, M, fs_epspos, r_range_epspos)
 end
 
 plt = plot(r_range, f_vals_analytic, label="Analytic Solution", grid=false, framestyle=:box, ylims=(0,1.05), xlabel="Radius (M)", ylabel="f (Arbitrary Units)")
@@ -50,9 +47,6 @@ for r in r_range
     push!(f_vals_approx, f_approx_func(r, fs, r_range, a=a, M=M))
     push!(f_vals_approx_epsneg, f_approx_func(r, fs_epsneg, r_range_epsneg, a=a, M=M))
     push!(f_vals_approx_epspos, f_approx_func(r, fs_epspos, r_range_epspos, a=a, M=M))
-#     f_vals_approx = temperature_approx.(r_vals, a, M, fs, r_range)
-#     f_vals_approx_epsneg = temperature_approx.(r_vals, a, M, fs_epsneg, r_range_epsneg)
-#     f_vals_approx_epspos = temperature_approx.(r_vals, a, M, fs_epspos, r_range_epspos)
 end
 
 plt = plot(r_range, f_vals_analytic, label="Analytic Solution", grid=false, framestyle=:box, ylims=(0,1.05), xlabel="Radius (M)", ylabel="f (Arbitrary Units)")
@@ -78,9 +72,6 @@ for r in r_range
     push!(f_vals_approx, f_approx_func(r, fs, r_range, a=a, M=M))
     push!(f_vals_approx_epsneg, f_approx_func(r, fs_epsneg, r_range_epsneg, a=a, M=M))
     push!(f_vals_approx_epspos, f_approx_func(r, fs_epspos, r_range_epspos, a=a, M=M))
-#     f_vals_approx = temperature_approx.(r_vals, a, M, fs, r_range)
-#     f_vals_approx_epsneg = temperature_approx.(r_vals, a, M, fs_epsneg, r_range_epsneg)
-#     f_vals_approx_epspos = temperature_approx.(r_vals, a, M, fs_epspos, r_range_epspos)
 end
 
 plt = plot(r_range, f_vals_analytic, label="Analytic Solution", grid=false, framestyle=:box, ylims=(0,1.05), xlabel="Radius (M)", ylabel="f (Arbitrary Units)")
@@ -106,9 +97,6 @@ for r in r_range
     push!(f_vals_approx, f_approx_func(r, fs, r_range, a=a, M=M))
     push!(f_vals_approx_epsneg, f_approx_func(r, fs_epsneg, r_range_epsneg, a=a, M=M))
     push!(f_vals_approx_epspos, f_approx_func(r, fs_epspos, r_range_epspos, a=a, M=M))
-#     f_vals_approx = temperature_approx.(r_vals, a, M, fs, r_range)
-#     f_vals_approx_epsneg = temperature_approx.(r_vals, a, M, fs_epsneg, r_range_epsneg)
-#     f_vals_approx_epspos = temperature_approx.(r_vals, a, M, fs_epspos, r_range_epspos)
 end
 
 plt = plot(r_range, f_vals_analytic, label="Analytic Solution", grid=false, framestyle=:box, ylims=(0,1.05), xlabel="Radius (M)", ylabel="f (Arbitrary Units)")

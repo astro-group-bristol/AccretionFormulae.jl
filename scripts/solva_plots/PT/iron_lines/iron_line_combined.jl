@@ -18,5 +18,5 @@ for angle in angle_vars
                         nbins=200,
                         fov=10
                         )
-    png(plt, "iron_line_combined angle=$angle.png")
+    png(plt, "iron_line_combined_angle=$angle.png")
 end

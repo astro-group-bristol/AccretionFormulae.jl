@@ -21,7 +21,7 @@ for ϵ_3 in ϵ_3_vars
                                                     ϵ_3=ϵ_3
                                                     )
     title!(title)
-    png(hmap, "render_ϵ_3_approx=$ϵ_3.png")
+    png(hmap, "render_eps_3_approx=$ϵ_3.png")
 end
 
 for angle in angle_vars
