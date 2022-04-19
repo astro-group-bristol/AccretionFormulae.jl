@@ -124,7 +124,7 @@ function init(;a=0.97, M=1.0, disc_radius=50.0, ϵ_3=0, α_13=0, α_22=0, α_52=
     return fs, r_range
 end
 
-function f_approx_func(r, fs, r_range; a=0.97, M=1.0, disc_radius=50.0)
+function f_approx_func(r, fs, r_range; a=0.97, M=1.0)
     
     r_range_short = collect(r_range)
     pop!(r_range_short)
