@@ -16,7 +16,7 @@ for ϵ_3 in ϵ_3_vars
                                                     obs_angle=angle_fixed,
                                                     tolerance=1e-12,
                                                     dtmax=0.5,
-                                                    size_multiplier=10,
+                                                    size_multiplier=4,
                                                     resolution=3000,
                                                     ϵ_3=ϵ_3
                                                     )
@@ -31,7 +31,7 @@ for angle in angle_vars
                                                     mass=mass_fixed,
                                                     tolerance=1e-12,
                                                     dtmax=0.5,
-                                                    size_multiplier=10,
+                                                    size_multiplier=4,
                                                     resolution=3000
                                                     )
     title!(title)
