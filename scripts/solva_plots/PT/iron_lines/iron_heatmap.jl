@@ -7,7 +7,6 @@ hmp = iron_line_heatmap(
                         dtmax=5,
                         size_multiplier=4,
                         nbins=200,
-                        vars=vars,
-                        grid=false
+                        vars=vars
                         )
 png(hmp, "iron_heatmap.png")

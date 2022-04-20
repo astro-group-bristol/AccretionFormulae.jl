@@ -25,12 +25,12 @@ include("hunting-circular-orbits.jl")
 
 # for Kerr, this is just `u[2]`, but to illustrate
 # how you could do this for other metrics
-function sqrt_g_tilde(m, u)
-    metric = GeodesicBase.metric(m, u)
-    metric_no_θ = metric[setdiff(1:4, 3), setdiff(1:4, 3)]
+# function sqrt_g_tilde(m, u)
+#     metric = GeodesicBase.metric(m, u)
+#     metric_no_θ = metric[setdiff(1:4, 3), setdiff(1:4, 3)]
 
-    sqrt(-LinearAlgebra.det(metric_no_θ))
-end
+#     sqrt(-LinearAlgebra.det(metric_no_θ))
+# end
 """
 Johannsen 2014 eq 28
 """
