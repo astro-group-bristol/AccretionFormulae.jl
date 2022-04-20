@@ -1,6 +1,6 @@
-include("..\\temperature_render.jl")
-include("..\\iron_line_profile.jl")
-include("..\\colourbar.jl")
+include("../temperature_render.jl")
+include("../iron_line_profile.jl")
+include("../colourbar.jl")
 using Measures
 gr()
 
