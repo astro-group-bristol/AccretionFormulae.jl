@@ -47,7 +47,8 @@ function iron_line_heatmap(;
                 yticks=(LinRange(0, length(vars), 5), string.(LinRange(vars[1], vars[end], 5))),
                 xlabel="Energy (keV)",
                 ylabel="Observation Angle",
-                cb_title="Flux (Arbitrary Units)"
+                cb_title="Flux (Arbitrary Units)",
+                margin=10mm
                 )
 end
 
