@@ -13,7 +13,7 @@ for angle in angle_vars
                         obs_angle=angle,
                         tolerance=1e-12,
                         dtmax=0.5,
-                        size_multiplier=10,
+                        size_multiplier=4,
                         resolution=3000,
                         nbins=200,
                         fov=10
