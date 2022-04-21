@@ -1,13 +1,15 @@
 include("temperature_render.jl")
-using BenchmarkTools
+using Time
 using Plots
 
 size_multipliers = 1:20
 times = []
 
-for size_multiplier in size_multipliers
-    push!(times, @btime temperature_render(;size_multiplier=size_multiplier))
+for mult in size_multipliers
+    start=now()
+    temperature_render(;size_multiplier=mult)
+    push!(times, now()-start)
 end
 
-plt = plot(size_multiplier, times, xlabel="Size Multiplier", ylabel="Code Execution Time")
+plt = plot(size_multipliers, times, xlabel="Size Multiplier", ylabel="Code Execution Time")
 display(plt)
