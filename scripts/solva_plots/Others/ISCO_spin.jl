@@ -1,7 +1,8 @@
 using AccretionFormulae
+using Plots
 
 function r_hor(a, M)
-    M +  √(M^2 - (a*M)^2)
+    (M +  √(M^2 - (a*M)^2))/M
 end
 
 M = 10*1.99e30
@@ -16,8 +17,8 @@ plt = plot(
             ISCO_pos_vals, 
             legend=:topleft, 
             label="Prograde ISCO", 
-            xlabel="Spin", 
-            ylabel="Radius (m)", 
+            xlabel="a (M)", 
+            ylabel="R (M)", 
             grid=false, 
             framestyle=:box
             )
