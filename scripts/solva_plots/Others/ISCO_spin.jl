@@ -8,8 +8,8 @@ end
 M = 10*1.99e30
 spin_vals_pos = LinRange(0, 1, 1000)
 spin_vals_neg = LinRange(-1, 0 , 1000)
-ISCO_pos_vals = AccretionFormulae.r_isco.(spin_vals_pos, M)
-ISCO_neg_vals = reverse(AccretionFormulae.r_isco.(spin_vals_neg, M))
+ISCO_pos_vals = AccretionFormulae.r_isco.(spin_vals_pos, M) ./ M
+ISCO_neg_vals = reverse(AccretionFormulae.r_isco.(spin_vals_neg, M)) ./ M
 EH_pos_vals = r_hor.(spin_vals_pos, M)
 
 plt = plot(
