@@ -16,12 +16,12 @@ plt = plot(
             spin_vals_pos, 
             ISCO_pos_vals, 
             legend=:topleft, 
-            label="Prograde ISCO", 
+            label="\$r_{ISCO} \\textrm{Prograde}\$", 
             xlabel="a (M)", 
             ylabel="R (M)", 
             grid=false, 
             framestyle=:box
             )
-plot!(spin_vals_pos, ISCO_neg_vals, label="Retrograde ISCO")
-plot!(spin_vals_pos, EH_pos_vals, label="Event Horizon Radius")
+plot!(spin_vals_pos, ISCO_neg_vals, label="\$r_{ISCO} \\textrm{Retrograde}\$")
+plot!(spin_vals_pos, EH_pos_vals, label="\$r_{s}\$")
 png(plt, "ISCO_EH_spin_comp.png")
