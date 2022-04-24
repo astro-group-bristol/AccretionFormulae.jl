@@ -149,5 +149,6 @@ for mass in masses
                                                                 size_multiplier=4,
                                                                 dtmax=3
                                                                 )
-    push(mass_vals, mass_val)
+    push(max_vals, mass_val)
 end
+@show(max_vals)
