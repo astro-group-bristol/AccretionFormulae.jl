@@ -142,7 +142,7 @@ masses = [10, 100, 10e6]
 max_vals = []
 for mass in masses
     hmap, cache, title, new_img, max_val = temperature_render(
-                                                                obs_angle=85.0
+                                                                obs_angle=85.0,
                                                                 spin=0.998,
                                                                 mass=mass,
                                                                 tolerance=1e-12,
