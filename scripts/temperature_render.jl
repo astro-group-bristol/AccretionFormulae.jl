@@ -138,13 +138,13 @@ end
 # title!(title)
 # display(hmap)
 
-masses = [10, 100, 10e6]
+spins = [0.0, 0.5, 0.998]
 max_vals = []
-for mass in masses
+for spin in spins
     hmap, cache, title, new_img, max_val = temperature_render(
                                                                 obs_angle=85.0,
-                                                                spin=0.998,
-                                                                mass=mass,
+                                                                spin=spin,
+                                                                mass=10,
                                                                 tolerance=1e-12,
                                                                 size_multiplier=4,
                                                                 dtmax=3
