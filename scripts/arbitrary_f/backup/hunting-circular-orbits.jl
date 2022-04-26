@@ -10,44 +10,28 @@ using GeodesicTracer
 using ComputedGeodesicEquations
 using GeodesicBase
 using CarterBoyerLindquist
+
 using StaticArrays
 using Optim
 
-# using Plots
-
-# include("/Users/lucyackland-snow/Desktop/DevEnv1/dev/AccretionFormulae/src/johannsen.jl")
-
-
-# import GeodesicBase, GeodesicTracer
-# function GeodesicBase.metric(m::GeodesicTracer.AbstractAutoDiffStaticAxisSymmetricParams{T}, u) where {T}
-#     rθ = @SVector [u[2], u[3]]
-#     comps = GeodesicTracer.metric_components(m, rθ)
-#     @SMatrix [
-#     comps[1] 0 0 comps[5]
-#     0 comps[2] 0 0
-#     0 0 comps[3] 0
-#     comps[5] 0 0 comps[4]
-#     ]
-# end
-
+using Plots
 
 # quality of stability function which has a minimum at stable orbits
-# this is just a sum of the normalised residuals
+# this is just a sum of the normalised residuals
 Qs(rs) = sqrt(sum((rs ./ rs[1] .- 1.0) .^ 2) / length(rs))
 
 # utility function for tracing a single orbit given some `vϕ`
 function trace_single_geodesic(m, u, vϕ)
-
     v = @SVector [0.0, 0.0, 0.0, vϕ]
     tracegeodesics(
         m,
         u,
         v,
         # we pick a duration that is quite long
-        # but you can toy with this
+        # but you can toy with this
         # the method is pretty good for `r > r_isco` at even just
         # (0.0, 30.0) for the affine time
-        (0.0, 500.0),
+        (0.0, 300.0),
         μ = 1.0,
         # amazingly, we don't even need _that_ good tolerances
         abstol = 1e-9,
@@ -64,7 +48,7 @@ function geodesic_for(m, r_init, vϕ)
 end
 
 # utility function which returns to stability after integrating a geodesic
-# for some trial `vϕ`
+# for some trial `vϕ`
 function estimate_stability(m, u, vϕ)
     sol = trace_single_geodesic(m, u, vϕ)
     rs = selectdim(sol, 1, 6)
@@ -124,9 +108,8 @@ end
 
 # range is set from approx schwarzschild radius to whatever you like it to be
 # maybe it's best just to do from r_isco outwards?
-function find_orbit_range(;m, r_range = 2.0:0.1:10.0, a = -0.4, upper = 0.1)
-    # m = BoyerLindquist(M = 1.0, a = a)
-    # m = JohannsenAD(M=1.0, a=a)
+function find_orbit_range(; r_range = 2.0:0.1:10.0, a = -0.4, upper = 0.1)
+    m = BoyerLindquist(M = 1.0, a = a)
     vϕs = @time find_vϕ_for_orbit_range(m, r_range; upper = upper)
 
     # calculate the paths
@@ -139,10 +122,6 @@ function find_orbit_range(;m, r_range = 2.0:0.1:10.0, a = -0.4, upper = 0.1)
         f in (GeodesicBase.E, GeodesicBase.Lz)
     ]
 
-    r = [ geo.u[1].x[1][2] for geo in geodesics]
-
-        
-
     # get the time velocity
     vts = [geo.u[1].x[1][1] for geo in geodesics]
 
@@ -153,38 +132,24 @@ end
 
 
 # test function for a single radius
-# incase you want to trial indivial things
-function test_single(;m, r_init = 10.0, a = 0.0, upper = 0.1)
+# incase you want to trial indivial things
+function test_single(; r_init = 10.0, a = 0.0, upper = 0.1)
 
-    # m = BoyerLindquist(M = 1.0, a = a)
-    # m = JohannsenAD(M=1.0, a=a)
+    m = BoyerLindquist(M = 1.0, a = a)
     vϕ = find_vϕ_for_orbit(m, r_init; upper_bound = upper)
-
     sol = geodesic_for(m, r_init, vϕ)
 
-    plot(sol, vars = (8, 6), projection = :polar, range = (0.0, 10.0), legend = false)
+    plot!(sol, vars = (8, 6), projection = :polar, range = (0.0, r_init), legend = false)
 end
 
-# a=0.5
-# r=8
-
-# m = BoyerLindquist(M=1.0, a=a)
-
-# test_single(;m=m, a=a, r_init=r, upper=0.1)
-
-
-
-# using Plots
-# gr()
+test_single()
 
 # pl = plot()
 
-# m = BoyerLindquist(M=1.0, a=0.998)
-# # m = JohannsenAD(M=1.0, a=a)
-# r_range = 1.0:0.5:6.0
-# vϕs = @time find_vϕ_for_orbit_range(m, r_range; upper=0.1)
+# m = BoyerLindquist(M=1.0, a=-0.5)
+# r_range = 3.0:1.0:13.0
+# vϕs = @time find_vϕ_for_orbit_range(m, r_range; upper=0.2)
 # geodesics = map(i -> geodesic_for(m, r_range[i], vϕs[i]), eachindex(r_range))
-
 
 # for sol in geodesics
 #     plot!(
@@ -196,29 +161,19 @@ end
 #     )
 # end
 
-# pl
-
-# CarterBoyerLindquist.rms(m.M, m.a)
-
-# r = [geo.u[2].x[2][1] for geo in geodesics]
-# print(r)
-
-
-# print(first(r_range))
-
 # plot!(
 #     _ -> GeodesicBase.inner_radius(m),
 #     0.0:0.01:2π,
 #     c=:black,
-#     lw=1
+#     lw=5
 # )
 # plot!(
 #     _ -> CarterBoyerLindquist.rms(m.M, m.a),
 #     0.0:0.01:2π,
 #     c=:black,
-#     lw=1,
+#     lw=2,
 #     ls=:dot
-# # )
+# )
 
 # pl
 

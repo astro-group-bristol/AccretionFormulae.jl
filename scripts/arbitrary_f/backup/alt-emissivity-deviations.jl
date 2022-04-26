@@ -1,6 +1,7 @@
 """
 Uses `hunting-circular-orbits.jl` and the Page & Thorne (1974) eq. (12)
 to simulate a flux model.
+
 Works for a < 0.97, then the orbit finder starts to panic close to the ISCO.
 """
 
@@ -11,23 +12,25 @@ using ComputedGeodesicEquations
 using GeodesicBase
 using AccretionFormulae
 
-import CarterBoyerLindquist # for rms function
+import CarterBoyerLindquist # for rms function
 import LinearAlgebra
 
 using StaticArrays
+using Plots
 using Interpolations
+gr()
 
-# include("/Users/lucyackland-snow/Desktop/DevEnv1/dev/AccretionFormulae/src/johannsen.jl")
+# hoist other functions
 include("hunting-circular-orbits.jl")
 
 # for Kerr, this is just `u[2]`, but to illustrate
-# how you could do this for other metrics
-function sqrt_g_tilde(m, u)
-    metric = GeodesicBase.metric(m, u)
-    metric_no_θ = metric[setdiff(1:4, 3), setdiff(1:4, 3)]
+# how you could do this for other metrics
+# function sqrt_g_tilde(m, u)
+#     metric = GeodesicBase.metric(m, u)
+#     metric_no_θ = metric[setdiff(1:4, 3), setdiff(1:4, 3)]
 
-    sqrt(-LinearAlgebra.det(metric_no_θ))
-end
+#     sqrt(-LinearAlgebra.det(metric_no_θ))
+# end
 """
 Johannsen 2014 eq 28
 """
@@ -39,13 +42,13 @@ function sqrt_g_tilde(r; a=0.97, M=0, ϵ_3=0, α_13=0, α_22=0, α_52=0)
                 (1 + (α_52 * M^2)/(r^2)))
 end
 
-# gradient function
+# gradient function
 #
 # we just compute discrete derivatives, since this is
 # sufficient when we have small `r`.
 # using interpolations can make the resolution better
 # and increase the accuracy, but this is a good quick-and-dirty way
-# to see if our results are going in the right direction
+# to see if our results are going in the right direction
 function ∇r(array, r)
     deriv = diff(array) ./ diff(r)
     # ensure same dimension using a lazy extension
@@ -55,7 +58,9 @@ end
 
 """
     f_approx(Lz, ∇rwt, ∇rLz_array, wt_array)
+
 A discretized version of `f` from Page & Thorne (1974) eq. (12):
+
 ```math
 f(r_n) \\approx - \\left. \\left[
    \\frac{1}{L_z} \\left(\\frac{\\partial \\dot{u}^t}{\\partial r} \\right)
@@ -65,6 +70,7 @@ f(r_n) \\approx - \\left. \\left[
 \\right] \\right\\rvert_{r = r_i}
 \\right\\}
 ```
+
 """
 function f_approx(Lz, ∇rwt, ∇rLz_array, wt_array, r; a=0.97, M=1.0, ϵ_3=0, α_13=0, α_22=0, α_52=0)
     -(∇rwt / Lz) * sum(∇rLz_array ./ wt_array) * r/sqrt_g_tilde(r; a, M, ϵ_3, α_13, α_22, α_52)
@@ -73,7 +79,7 @@ end
 # use this to see where things break down / if they break down
 function plot_derivative_test(r_range, res)
     lzs = res[:, 2]
-    # naive derivatives
+    # naive derivatives
     derivs = ∇r(lzs, r_range)
 
     plot(r_range, lzs, label = "Lz", c = :black, legend = false)
@@ -81,7 +87,7 @@ function plot_derivative_test(r_range, res)
 end
 
 
-# test plot
+# test plot
 function f_approx_test(r_range, res; a=0.97, M=1.0, ϵ_3=0, α_13=0, α_22=0, α_52=0)
     wts = res[:, 4]
     Lzs = res[:, 2]
@@ -97,21 +103,20 @@ function f_approx_test(r_range, res; a=0.97, M=1.0, ϵ_3=0, α_13=0, α_22=0, α
     fs = fs ./ maximum(fs)
 
     # we lose a point, so select all but last `r_range`
-    # since our derivative function needs at least 2 points  work
+    # since our derivative function needs at least 2 points to work
     # plot(r_range[2:end], fs, c = :black, xlabel = "r", ylabel = "f", label = "simulated f")
 end
 
 # this works up until about 0.97 then, the orbit search
 # starts to break down
 
-function init(;m, a=0.97, M=1.0, disc_radius=50.0, ϵ_3=0, α_13=0, α_22=0, α_52=0)
-    # m = BoyerLindquist(M = M, a = a)
-    # m = JohannsenAD(M=1.0, a=a)
+function init(;a=0.97, M=1.0, disc_radius=50.0, ϵ_3=0, α_13=0, α_22=0, α_52=0)
+    m = BoyerLindquist(M = M, a = a)
     u = @SVector [0.0, 13.0, deg2rad(90), 0.0]
 
     # making the steps too big over-estimates the gradient
     r_range = CarterBoyerLindquist.rms(m.M, m.a):0.01:disc_radius
-    res = find_orbit_range(;m, r_range = r_range, a = m.a)
+    res = find_orbit_range(; r_range = r_range, a = m.a)
 
     # creating an interpolated function of f
 
