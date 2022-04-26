@@ -61,6 +61,8 @@ for mass in masses
     R_isco = AccretionFormulae.r_isco(a_star, mass)
     r_vals = LinRange(R_isco, 50*mass, 1000)
     temperature_vals = AccretionFormulae.temperature.(r_vals, a_star, mass)
+    @show(mass/M_☼)
+    @show(maximum(temperature_vals))
     temperature_vals ./= 1e6
     push!(temperatures_mass, temperature_vals)
 end
@@ -77,6 +79,8 @@ for spin in spins
     R_isco = AccretionFormulae.r_isco(spin, M)
     r_vals = LinRange(R_isco, 30*M, 1000)
     temperature_vals = AccretionFormulae.temperature.(r_vals, spin, M)
+    @show(spin)
+    @show(maximum(temperature_vals))
     temperature_vals ./= 1e6
     # every line has a ISCO, so need to create r_vals in gravitational radii individually
     r_vals = r_vals ./ M

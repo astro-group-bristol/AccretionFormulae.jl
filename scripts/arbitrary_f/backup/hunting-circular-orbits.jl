@@ -128,6 +128,7 @@ function find_orbit_range(; r_range = 2.0:0.1:10.0, a = -0.4, upper = 0.1)
     # join time velocities in the last column
     # and angular velocities as the second last column
     hcat(e_lz, vϕs, vts)
+    return geodesics
 end
 
 
@@ -139,10 +140,37 @@ function test_single(; r_init = 10.0, a = 0.0, upper = 0.1)
     vϕ = find_vϕ_for_orbit(m, r_init; upper_bound = upper)
     sol = geodesic_for(m, r_init, vϕ)
 
-    plot!(sol, vars = (8, 6), projection = :polar, range = (0.0, r_init), legend = false)
+    plt = plot(sol, vars = (8, 6), projection = :polar, range = (0.0, r_init), legend = false)
+    # display(plt)
 end
 
-test_single()
+
+using Plots
+gr()
+
+pl = plot()
+
+m = BoyerLindquist(M=1.0, a=0.998)
+CarterBoyerLindquist.rms(m.M, m.a)
+# m = JohannsenAD(M=1.0, a=a)
+using AccretionFormulae
+R_isco = AccretionFormulae.r_isco(m.a, m.M)
+r_range = R_isco:3.0:30
+# vϕs = @time find_vϕ_for_orbit_range(m, r_range; upper=0.1)
+# geodesics = map(i -> geodesic_for(m, r_range[i], vϕs[i]), eachindex(r_range))
+geodesics = find_orbit_range()
+
+for sol in geodesics
+    plot!(
+        sol, 
+        vars=(8, 6), 
+        projection=:polar, 
+        range=(0.0, last(r_range)), 
+        legend=false
+    )
+end
+
+pl
 
 # pl = plot()
 
